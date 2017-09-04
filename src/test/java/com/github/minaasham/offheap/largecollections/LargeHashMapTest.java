@@ -7,13 +7,17 @@ import org.junit.Test;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import static com.github.minaasham.offheap.largecollections.serialization.SerializationTestUtils.randomString;
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableSet;
 import static org.junit.Assert.*;
 
 public class LargeHashMapTest {
@@ -291,6 +295,25 @@ public class LargeHashMapTest {
             map2.put("key2", "value2");
 
             assertTrue(map1.equals(map2));
+        }
+    }
+
+    @Test
+    public void testToString() {
+        try (LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+            map.put("key1", "value1");
+            map.put("key2", "value2");
+
+            Set<String> expectedLines = unmodifiableSet(new HashSet<>(asList("  key1=value1", "  key2=value2")));
+
+            String lineSeparator = System.lineSeparator();
+            String[] actualLines = map.toString().split("," + lineSeparator + "|" + lineSeparator);
+
+            assertEquals("{", actualLines[0]);
+            for (int i = 1; i < actualLines.length - 1; i++) {
+                assertTrue(expectedLines.contains(actualLines[i]));
+            }
+            assertEquals("}", actualLines[actualLines.length - 1]);
         }
     }
 

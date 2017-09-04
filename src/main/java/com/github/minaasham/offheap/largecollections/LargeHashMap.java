@@ -345,6 +345,33 @@ public class LargeHashMap<K, V> implements LargeMap<K, V> {
     }
 
     /**
+     * Returns a string representation of this map.  The string
+     * representation consists of a list of key-value mappings (in no
+     * particular order) enclosed in braces ("{@code {}}").  Adjacent
+     * mappings are separated by the characters {@code ",\n"} (comma
+     * and new line).  Each key-value mapping is rendered as {@code "  "}
+     * (two white spaces; for indentation) the key
+     * followed by an equals sign ("{@code =}") followed by the
+     * associated value.
+     *
+     * @return a string representation of this map
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append('{').append(System.lineSeparator());
+        for (Iterator<Entry<K, V>> iterator = iterator(); iterator.hasNext(); ) {
+            Entry<K, V> entry = iterator.next();
+            sb.append("  ").append(entry);
+            if (iterator.hasNext()) {
+                sb.append(",");
+            }
+            sb.append(System.lineSeparator());
+        }
+        return sb.append('}').toString();
+    }
+
+    /**
      * Checks if the map is already closed and throws an exception if so
      *
      * @throws IllegalStateException if the map was closed
