@@ -188,7 +188,7 @@ public class LargeHashMapTest {
     }
 
     @Test(expected = ConcurrentModificationException.class)
-    public void testIteratorThrowsIfMapChangeds() {
+    public void testIteratorThrowsIfMapChanges() {
         try (LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
             map.put("key1", "value1");
 
