@@ -301,6 +301,50 @@ public class LargeHashMap<K, V> implements LargeMap<K, V> {
     }
 
     /**
+     * Returns the hash code value for this {@link LargeMap}, i.e.,
+     * the sum of, for each key-value pair in the map,
+     * {@code key.hashCode() ^ value.hashCode()}.
+     *
+     * @return the hash code value for this map
+     */
+    @Override
+    public int hashCode() {
+        int hashCode = 0;
+        for (Entry<K, V> entry : this) {
+            hashCode += entry.getKey().hashCode() ^ entry.getValue().hashCode();
+        }
+        return hashCode;
+    }
+
+    /**
+     * Compares the specified object with this map for equality.
+     * Returns {@code true} if the given object is a map with the same
+     * mappings as this map.
+     *
+     * @param o object to be compared for equality with this map
+     * @return {@code true} if the specified object is equal to this map
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LargeHashMap<K, V> that = (LargeHashMap<K, V>) o;
+
+        if (size != that.size) return false;
+        if (closed != that.closed) return false;
+
+        for (Entry<K, V> entry : this) {
+            V thisValue = entry.getValue();
+            V thatValue = that.get(entry.getKey());
+            if (thatValue == null || !thatValue.equals(thisValue)) return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Checks if the map is already closed and throws an exception if so
      *
      * @throws IllegalStateException if the map was closed

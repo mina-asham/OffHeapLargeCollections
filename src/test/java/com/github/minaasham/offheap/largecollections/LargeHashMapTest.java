@@ -246,6 +246,55 @@ public class LargeHashMapTest {
     }
 
     @Test
+    public void testHashCode() {
+        try (LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+            map.put("key1", "value1");
+            map.put("key2", "value2");
+
+            int expectedHashCode = ("key1".hashCode() ^ "value1".hashCode()) + ("key2".hashCode() ^ "value2".hashCode());
+            assertEquals(expectedHashCode, map.hashCode());
+        }
+    }
+
+    @Test
+    public void testEqualsSizeMismatch() {
+        try (LargeHashMap<String, String> map1 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
+             LargeHashMap<String, String> map2 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+            map1.put("key1", "value1");
+            map2.put("key1", "value1");
+
+            map1.put("key2", "value2");
+
+            assertFalse(map1.equals(map2));
+        }
+    }
+
+    @Test
+    public void testEqualsNotEqual() {
+        try (LargeHashMap<String, String> map1 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
+             LargeHashMap<String, String> map2 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+            map1.put("key1", "value1");
+            map2.put("key2", "value2");
+
+            assertFalse(map1.equals(map2));
+        }
+    }
+
+    @Test
+    public void testEquals() {
+        try (LargeHashMap<String, String> map1 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
+             LargeHashMap<String, String> map2 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+            map1.put("key1", "value1");
+            map2.put("key1", "value1");
+
+            map1.put("key2", "value2");
+            map2.put("key2", "value2");
+
+            assertTrue(map1.equals(map2));
+        }
+    }
+
+    @Test
     public void testStress() {
         try (LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
             Map<String, String> expectedMap = new HashMap<>();
