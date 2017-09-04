@@ -3,7 +3,7 @@ package com.github.minaasham.offheap.largecollections;
 import java.util.Map.Entry;
 
 /**
- * LargeMap, the main interface for all open head large maps
+ * LargeMap, the main interface for all large maps
  *
  * @param <K> The key type
  * @param <V> The value type
