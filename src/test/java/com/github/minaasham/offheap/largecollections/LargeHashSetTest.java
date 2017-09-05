@@ -262,39 +262,39 @@ public class LargeHashSetTest {
 
     @Test
     public void testEqualsSizeMismatch() {
-        try (LargeHashSet<String> map1 = LargeHashSet.of(STRING_SERIALIZER, 5);
-             LargeHashSet<String> map2 = LargeHashSet.of(STRING_SERIALIZER, 5)) {
-            map1.add("element1");
-            map2.add("element1");
+        try (LargeHashSet<String> set1 = LargeHashSet.of(STRING_SERIALIZER, 5);
+             LargeHashSet<String> set2 = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+            set1.add("element1");
+            set2.add("element1");
 
-            map1.add("element2");
+            set1.add("element2");
 
-            assertFalse(map1.equals(map2));
+            assertFalse(set1.equals(set2));
         }
     }
 
     @Test
     public void testEqualsNotEqual() {
-        try (LargeHashSet<String> map1 = LargeHashSet.of(STRING_SERIALIZER, 5);
-             LargeHashSet<String> map2 = LargeHashSet.of(STRING_SERIALIZER, 5)) {
-            map1.add("element1");
-            map2.add("element2");
+        try (LargeHashSet<String> set1 = LargeHashSet.of(STRING_SERIALIZER, 5);
+             LargeHashSet<String> set2 = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+            set1.add("element1");
+            set2.add("element2");
 
-            assertFalse(map1.equals(map2));
+            assertFalse(set1.equals(set2));
         }
     }
 
     @Test
     public void testEquals() {
-        try (LargeHashSet<String> map1 = LargeHashSet.of(STRING_SERIALIZER, 5);
-             LargeHashSet<String> map2 = LargeHashSet.of(STRING_SERIALIZER, 5)) {
-            map1.add("element1");
-            map2.add("element1");
+        try (LargeHashSet<String> set1 = LargeHashSet.of(STRING_SERIALIZER, 5);
+             LargeHashSet<String> set2 = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+            set1.add("element1");
+            set2.add("element1");
 
-            map1.add("element2");
-            map2.add("element2");
+            set1.add("element2");
+            set2.add("element2");
 
-            assertTrue(map1.equals(map2));
+            assertTrue(set1.equals(set2));
         }
     }
 
@@ -324,20 +324,20 @@ public class LargeHashSetTest {
 
             // Add
             IntStream.range(0, 10000).forEach(ignored -> {
-                String key = randomString();
-                assertEquals(expectedSet.add(key), set.add(key));
+                String element = randomString();
+                assertEquals(expectedSet.add(element), set.add(element));
             });
 
             // Contains
             IntStream.range(0, 10000).forEach(ignored -> {
-                String key = randomString();
-                assertEquals(expectedSet.contains(key), set.contains(key));
+                String element = randomString();
+                assertEquals(expectedSet.contains(element), set.contains(element));
             });
 
             // Remove
             IntStream.range(0, 10000).forEach(ignored -> {
-                String key = randomString();
-                assertEquals(expectedSet.remove(key), set.remove(key));
+                String element = randomString();
+                assertEquals(expectedSet.remove(element), set.remove(element));
             });
 
             // Size
