@@ -242,7 +242,7 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
                     return value;
                 }
                 entryIndex = offset(readKey(entryPointer), capacity);
-            } while (index <= bubbleUpIndex ? (index < entryIndex && entryIndex <= bubbleUpIndex) : (index < entryIndex || entryIndex <= bubbleUpIndex));
+            } while (index <= bubbleUpIndex ? index < entryIndex && entryIndex <= bubbleUpIndex : index < entryIndex || entryIndex <= bubbleUpIndex);
 
             UnsafeUtils.putLong(entryPointerAddresses + index * Long.BYTES, entryPointer);
             index = bubbleUpIndex;

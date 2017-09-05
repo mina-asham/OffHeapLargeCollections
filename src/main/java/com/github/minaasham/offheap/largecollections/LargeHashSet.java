@@ -215,7 +215,7 @@ public final class LargeHashSet<E> implements LargeSet<E> {
                     return true;
                 }
                 elementIndex = offset(read(elementPointer), capacity);
-            } while (index <= bubbleUpIndex ? (index < elementIndex && elementIndex <= bubbleUpIndex) : (index < elementIndex || elementIndex <= bubbleUpIndex));
+            } while (index <= bubbleUpIndex ? index < elementIndex && elementIndex <= bubbleUpIndex : index < elementIndex || elementIndex <= bubbleUpIndex);
 
             UnsafeUtils.putLong(elementPointerAddresses + index * Long.BYTES, elementPointer);
             index = bubbleUpIndex;
