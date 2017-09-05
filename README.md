@@ -9,7 +9,27 @@ Currently supported collections:
 
 Planned to support for version 1.0:
 * **LargeTreeSet**
-* **LargeTreeMap**  
+* **LargeTreeMap**
+
+## Example
+```java
+// Create key and value serializers
+StringSerializer stringSerializer = new StringSerializer();
+IntSerializer intSerializer = new IntSerializer();
+
+// Initialize and fill map
+LargeMap<String, Integer> nameToAge = LargeHashMap.of(stringSerializer, intSerializer);
+try (Stream<String> lines = Files.lines(Paths.get("nameToAge.csv"))) {
+    lines.map(line -> line.split(","))
+            .forEach(parts -> nameToAge.put(parts[0], Integer.parseInt(parts[1])));
+}
+
+// Do lookups with map, possibly load it as a server side cache
+// ...
+
+// Do not forgot to close the map to release the allocated memory
+nameToAge.close();
+```  
 
 ## Maven Snippet
 ```xml
