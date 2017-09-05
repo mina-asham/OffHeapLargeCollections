@@ -11,6 +11,17 @@ Planned to support for version 1.0:
 * **LargeTreeSet**
 * **LargeTreeMap**  
 
+## Maven Snippet
+```xml
+<dependencies>
+    <dependency>
+        <groupId>com.github.mina-asham</groupId>
+        <artifactId>offheap-largecollections</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </dependency>
+</dependencies>
+```
+
 ## Development Snapshots
 [com.github.mina-asham:offheap-largecollections:1.0-SNAPSHOT](https://oss.sonatype.org/content/repositories/snapshots/com/github/mina-asham/offheap-largecollections/1.0-SNAPSHOT/)
 
