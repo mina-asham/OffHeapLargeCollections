@@ -108,7 +108,7 @@ public class LargeHashSet<E> implements LargeSet<E> {
      * @param <E>               The element type
      * @return A {@link LargeHashSet} object
      */
-    public static <E> LargeHashSet<E> of(ObjectSerializer<E> elementSerializer, int capacity) {
+    public static <E> LargeHashSet<E> of(ObjectSerializer<E> elementSerializer, long capacity) {
         return LargeHashSet.of(elementSerializer, DEFAULT_LOAD_FACTOR, capacity);
     }
 
@@ -121,7 +121,7 @@ public class LargeHashSet<E> implements LargeSet<E> {
      * @param <E>               The element type
      * @return A {@link LargeHashSet} object
      */
-    public static <E> LargeHashSet<E> of(@NonNull ObjectSerializer<E> elementSerializer, double loadFactor, int capacity) {
+    public static <E> LargeHashSet<E> of(@NonNull ObjectSerializer<E> elementSerializer, double loadFactor, long capacity) {
         if (loadFactor <= 0 || 1 <= loadFactor) throw new IllegalArgumentException("Load factor must be bigger than 0 and less than 1");
         if (capacity <= 0) throw new IllegalArgumentException("Initial capacity must be at least 1");
 

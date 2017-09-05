@@ -122,7 +122,7 @@ public class LargeHashMap<K, V> implements LargeMap<K, V> {
      * @param <V>             The value type
      * @return A {@link LargeHashMap} object
      */
-    public static <K, V> LargeHashMap<K, V> of(ObjectSerializer<K> keySerializer, ObjectSerializer<V> valueSerializer, int capacity) {
+    public static <K, V> LargeHashMap<K, V> of(ObjectSerializer<K> keySerializer, ObjectSerializer<V> valueSerializer, long capacity) {
         return LargeHashMap.of(keySerializer, valueSerializer, DEFAULT_LOAD_FACTOR, capacity);
     }
 
@@ -137,7 +137,7 @@ public class LargeHashMap<K, V> implements LargeMap<K, V> {
      * @param <V>             The value type
      * @return A {@link LargeHashMap} object
      */
-    public static <K, V> LargeHashMap<K, V> of(@NonNull ObjectSerializer<K> keySerializer, @NonNull ObjectSerializer<V> valueSerializer, double loadFactor, int capacity) {
+    public static <K, V> LargeHashMap<K, V> of(@NonNull ObjectSerializer<K> keySerializer, @NonNull ObjectSerializer<V> valueSerializer, double loadFactor, long capacity) {
         if (loadFactor <= 0 || 1 <= loadFactor) throw new IllegalArgumentException("Load factor must be bigger than 0 and less than 1");
         if (capacity <= 0) throw new IllegalArgumentException("Initial capacity must be at least 1");
 
