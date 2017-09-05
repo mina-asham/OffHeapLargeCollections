@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
  * @param <V> The value type, cannot be null
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class LargeHashMap<K, V> implements LargeMap<K, V> {
+public final class LargeHashMap<K, V> implements LargeMap<K, V> {
 
     /**
      * Default load factor for the hash map

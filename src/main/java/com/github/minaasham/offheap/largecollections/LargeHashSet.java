@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
  * @param <E> The element type, cannot be null
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class LargeHashSet<E> implements LargeSet<E> {
+public final class LargeHashSet<E> implements LargeSet<E> {
 
     /**
      * Default load factor for the hash set

@@ -4,7 +4,7 @@ import com.github.minaasham.offheap.largecollections.serialization.MemoryReader;
 import com.github.minaasham.offheap.largecollections.serialization.MemoryWriter;
 import com.github.minaasham.offheap.largecollections.serialization.ObjectSerializer;
 
-public class ShortSerializer implements ObjectSerializer<Short> {
+public final class ShortSerializer implements ObjectSerializer<Short> {
 
     @Override
     public void serialize(MemoryWriter writer, Short object) {

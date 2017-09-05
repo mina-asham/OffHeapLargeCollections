@@ -6,7 +6,7 @@ import com.github.minaasham.offheap.largecollections.serialization.MemoryWriter;
  * UnsafeMemoryWriter, the internal implementation for the memory writer
  * This class is package private as it's an internal implementation detail
  */
-class UnsafeMemoryWriter implements MemoryWriter {
+final class UnsafeMemoryWriter implements MemoryWriter {
 
     /**
      * The current address to write to

@@ -4,7 +4,7 @@ import com.github.minaasham.offheap.largecollections.serialization.MemoryReader;
 import com.github.minaasham.offheap.largecollections.serialization.MemoryWriter;
 import com.github.minaasham.offheap.largecollections.serialization.ObjectSerializer;
 
-public class DoubleSerializer implements ObjectSerializer<Double> {
+public final class DoubleSerializer implements ObjectSerializer<Double> {
 
     @Override
     public void serialize(MemoryWriter writer, Double object) {

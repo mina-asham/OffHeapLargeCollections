@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import java.nio.charset.Charset;
 
 @RequiredArgsConstructor
-public class StringSerializer implements ObjectSerializer<String> {
+public final class StringSerializer implements ObjectSerializer<String> {
 
     private final Charset encoding;
 

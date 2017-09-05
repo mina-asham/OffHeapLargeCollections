@@ -4,7 +4,7 @@ import com.github.minaasham.offheap.largecollections.serialization.MemoryReader;
 import com.github.minaasham.offheap.largecollections.serialization.MemoryWriter;
 import com.github.minaasham.offheap.largecollections.serialization.ObjectSerializer;
 
-public class ByteSerializer implements ObjectSerializer<Byte> {
+public final class ByteSerializer implements ObjectSerializer<Byte> {
 
     @Override
     public void serialize(MemoryWriter writer, Byte object) {

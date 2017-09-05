@@ -6,7 +6,7 @@ import com.github.minaasham.offheap.largecollections.serialization.MemoryReader;
  * UnsafeMemoryReader, the internal implementation for the memory reader
  * This class is package private as it's an internal implementation detail
  */
-class UnsafeMemoryReader implements MemoryReader {
+final class UnsafeMemoryReader implements MemoryReader {
 
     /**
      * The current address to read from

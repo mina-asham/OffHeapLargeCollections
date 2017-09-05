@@ -4,7 +4,7 @@ import com.github.minaasham.offheap.largecollections.serialization.MemoryReader;
 import com.github.minaasham.offheap.largecollections.serialization.MemoryWriter;
 import com.github.minaasham.offheap.largecollections.serialization.ObjectSerializer;
 
-public class BooleanSerializer implements ObjectSerializer<Boolean> {
+public final class BooleanSerializer implements ObjectSerializer<Boolean> {
 
     @Override
     public void serialize(MemoryWriter writer, Boolean object) {
