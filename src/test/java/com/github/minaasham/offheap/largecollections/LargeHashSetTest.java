@@ -1,5 +1,6 @@
 package com.github.minaasham.offheap.largecollections;
 
+import com.github.minaasham.offheap.largecollections.serialization.common.IntSerializer;
 import com.github.minaasham.offheap.largecollections.serialization.common.StringSerializer;
 import org.junit.AfterClass;
 import org.junit.Test;
@@ -348,6 +349,21 @@ public class LargeHashSetTest {
                 assertTrue(expectedLines.contains(actualLines[i]));
             }
             assertEquals("}", actualLines[actualLines.length - 1]);
+        }
+    }
+
+    @Test
+    public void testFixedSize() {
+        try (LargeSet<Integer> set = LargeHashSet.of(new IntSerializer())) {
+            assertTrue(set.add(1));
+            assertTrue(set.add(2));
+            assertTrue(set.add(3));
+
+            assertTrue(set.remove(1));
+            assertTrue(set.remove(2));
+            assertTrue(set.remove(3));
+
+            assertEquals(0, set.size());
         }
     }
 

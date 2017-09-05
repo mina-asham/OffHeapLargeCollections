@@ -1,5 +1,6 @@
 package com.github.minaasham.offheap.largecollections;
 
+import com.github.minaasham.offheap.largecollections.serialization.FixedSizeObjectSerializer;
 import com.github.minaasham.offheap.largecollections.serialization.MemoryReader;
 import com.github.minaasham.offheap.largecollections.serialization.ObjectSerializer;
 import lombok.AccessLevel;
@@ -49,9 +50,29 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
     private final ObjectSerializer<K> keySerializer;
 
     /**
+     * Does the key have a fixed size?
+     */
+    private final boolean keyFixedSize;
+
+    /**
+     * The key's header size; 0 for fixed and Integer.BYTES for variable
+     */
+    private final int keyHeaderSize;
+
+    /**
      * The value object serializer
      */
     private final ObjectSerializer<V> valueSerializer;
+
+    /**
+     * Does the value have a fixed size?
+     */
+    private final boolean valueFixedSize;
+
+    /**
+     * The value's header size; 0 for fixed and Integer.BYTES for variable
+     */
+    private final int valueHeaderSize;
 
     /**
      * The load factor for the hash map
@@ -141,11 +162,17 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
         if (loadFactor <= 0 || 1 <= loadFactor) throw new IllegalArgumentException("Load factor must be bigger than 0 and less than 1");
         if (capacity <= 0) throw new IllegalArgumentException("Initial capacity must be at least 1");
 
+        boolean keyFixedSize = keySerializer instanceof FixedSizeObjectSerializer;
+        boolean valueFixedSize = valueSerializer instanceof FixedSizeObjectSerializer;
         return new LargeHashMap<>(
                 new UnsafeMemoryReader(),
                 new UnsafeMemoryWriter(),
                 keySerializer,
+                keyFixedSize,
+                keyFixedSize ? 0 : Integer.BYTES,
                 valueSerializer,
+                valueFixedSize,
+                valueFixedSize ? 0 : Integer.BYTES,
                 loadFactor,
                 UnsafeUtils.allocate(capacity * Long.BYTES),
                 capacity,
@@ -197,14 +224,14 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
         int keySize = keySerializer.sizeInBytes(key);
         int valueSize = valueSerializer.sizeInBytes(value);
 
-        entryPointer = UnsafeUtils.allocate(Integer.BYTES + keySize + Integer.BYTES + valueSize);
+        entryPointer = UnsafeUtils.allocate(keyHeaderSize + keySize + valueHeaderSize + valueSize);
         UnsafeUtils.putLong(entryPointerAddresses + offset, entryPointer);
 
-        UnsafeUtils.putInt(entryPointer, keySize);
-        keySerializer.serialize(memoryWriter.resetTo(entryPointer + Integer.BYTES, keySize), key);
+        if (!keyFixedSize) UnsafeUtils.putInt(entryPointer, keySize);
+        keySerializer.serialize(memoryWriter.resetTo(entryPointer + keyHeaderSize, keySize), key);
 
-        UnsafeUtils.putInt(entryPointer + Integer.BYTES + keySize, valueSize);
-        valueSerializer.serialize(memoryWriter.resetTo(entryPointer + Integer.BYTES + keySize + Integer.BYTES, valueSize), value);
+        if (!valueFixedSize) UnsafeUtils.putInt(entryPointer + keyHeaderSize + keySize, valueSize);
+        valueSerializer.serialize(memoryWriter.resetTo(entryPointer + keyHeaderSize + keySize + valueHeaderSize, valueSize), value);
 
         return previous;
     }
@@ -440,8 +467,8 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
      * @return The entry's key
      */
     private K readKey(long entryPointer) {
-        int keySize = UnsafeUtils.getInt(entryPointer);
-        MemoryReader reader = memoryReader.resetTo(entryPointer + Integer.BYTES, keySize);
+        int keySize = keyFixedSize ? keySerializer.sizeInBytes(null) : UnsafeUtils.getInt(entryPointer);
+        MemoryReader reader = memoryReader.resetTo(entryPointer + keyHeaderSize, keySize);
 
         return keySerializer.deserialize(reader);
     }
@@ -453,10 +480,10 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
      * @return The entry's value
      */
     private V readValue(long entryPointer) {
-        int keySize = UnsafeUtils.getInt(entryPointer);
-        long valuePointer = entryPointer + Integer.BYTES + keySize;
-        int valueSize = UnsafeUtils.getInt(valuePointer);
-        MemoryReader reader = memoryReader.resetTo(valuePointer + Integer.BYTES, valueSize);
+        int keySize = keyFixedSize ? keySerializer.sizeInBytes(null) : UnsafeUtils.getInt(entryPointer);
+        long valuePointer = entryPointer + keyHeaderSize + keySize;
+        int valueSize = valueFixedSize ? valueSerializer.sizeInBytes(null) : UnsafeUtils.getInt(valuePointer);
+        MemoryReader reader = memoryReader.resetTo(valuePointer + valueHeaderSize, valueSize);
 
         return valueSerializer.deserialize(reader);
     }

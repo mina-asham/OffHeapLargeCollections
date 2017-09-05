@@ -1,5 +1,6 @@
 package com.github.minaasham.offheap.largecollections;
 
+import com.github.minaasham.offheap.largecollections.serialization.FixedSizeObjectSerializer;
 import com.github.minaasham.offheap.largecollections.serialization.MemoryReader;
 import com.github.minaasham.offheap.largecollections.serialization.ObjectSerializer;
 import lombok.AccessLevel;
@@ -44,6 +45,16 @@ public final class LargeHashSet<E> implements LargeSet<E> {
      * The element object serializer
      */
     private final ObjectSerializer<E> elementSerializer;
+
+    /**
+     * Does the element have a fixed size?
+     */
+    private final boolean fixedSize;
+
+    /**
+     * The header size; 0 for fixed and Integer.BYTES for variable
+     */
+    private final int headerSize;
 
     /**
      * The load factor for the hash set
@@ -125,10 +136,13 @@ public final class LargeHashSet<E> implements LargeSet<E> {
         if (loadFactor <= 0 || 1 <= loadFactor) throw new IllegalArgumentException("Load factor must be bigger than 0 and less than 1");
         if (capacity <= 0) throw new IllegalArgumentException("Initial capacity must be at least 1");
 
+        boolean fixedSize = elementSerializer instanceof FixedSizeObjectSerializer;
         return new LargeHashSet<>(
                 new UnsafeMemoryReader(),
                 new UnsafeMemoryWriter(),
                 elementSerializer,
+                fixedSize,
+                fixedSize ? 0 : Integer.BYTES,
                 loadFactor,
                 UnsafeUtils.allocate(capacity * Long.BYTES),
                 capacity,
@@ -174,11 +188,11 @@ public final class LargeHashSet<E> implements LargeSet<E> {
 
         int elementSize = elementSerializer.sizeInBytes(element);
 
-        elementPointer = UnsafeUtils.allocate(Integer.BYTES + elementSize);
+        elementPointer = UnsafeUtils.allocate(headerSize + elementSize);
         UnsafeUtils.putLong(elementPointerAddresses + offset, elementPointer);
 
-        UnsafeUtils.putInt(elementPointer, elementSize);
-        elementSerializer.serialize(memoryWriter.resetTo(elementPointer + Integer.BYTES, elementSize), element);
+        if (!fixedSize) UnsafeUtils.putInt(elementPointer, elementSize);
+        elementSerializer.serialize(memoryWriter.resetTo(elementPointer + headerSize, elementSize), element);
 
         return true;
     }
@@ -412,8 +426,8 @@ public final class LargeHashSet<E> implements LargeSet<E> {
      * @return The element
      */
     private E read(long elementPointer) {
-        int elementSize = UnsafeUtils.getInt(elementPointer);
-        MemoryReader reader = memoryReader.resetTo(elementPointer + Integer.BYTES, elementSize);
+        int elementSize = fixedSize ? elementSerializer.sizeInBytes(null) : UnsafeUtils.getInt(elementPointer);
+        MemoryReader reader = memoryReader.resetTo(elementPointer + headerSize, elementSize);
 
         return elementSerializer.deserialize(reader);
     }
