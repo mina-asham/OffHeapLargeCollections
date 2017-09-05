@@ -38,7 +38,7 @@ public final class BooleanSerializer implements ObjectSerializer<Boolean> {
      * @return The size of the passed boolean in bytes
      */
     @Override
-    public long sizeInBytes(Boolean object) {
+    public int sizeInBytes(Boolean object) {
         return Byte.BYTES;
     }
 }

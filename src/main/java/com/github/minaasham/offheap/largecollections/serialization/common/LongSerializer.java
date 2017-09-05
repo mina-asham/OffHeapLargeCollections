@@ -38,7 +38,7 @@ public final class LongSerializer implements ObjectSerializer<Long> {
      * @return The size of the passed long in bytes
      */
     @Override
-    public long sizeInBytes(Long object) {
+    public int sizeInBytes(Long object) {
         return Long.BYTES;
     }
 }

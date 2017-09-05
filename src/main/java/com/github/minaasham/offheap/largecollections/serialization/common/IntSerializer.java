@@ -38,7 +38,7 @@ public final class IntSerializer implements ObjectSerializer<Integer> {
      * @return The size of the passed integer in bytes
      */
     @Override
-    public long sizeInBytes(Integer object) {
+    public int sizeInBytes(Integer object) {
         return Integer.BYTES;
     }
 }

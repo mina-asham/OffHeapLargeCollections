@@ -38,7 +38,7 @@ public final class ByteSerializer implements ObjectSerializer<Byte> {
      * @return The size of the passed byte in bytes
      */
     @Override
-    public long sizeInBytes(Byte object) {
+    public int sizeInBytes(Byte object) {
         return Byte.BYTES;
     }
 }

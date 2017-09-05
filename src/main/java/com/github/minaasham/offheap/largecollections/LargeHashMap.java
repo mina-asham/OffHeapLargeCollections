@@ -194,17 +194,17 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
             size++;
         }
 
-        long keySize = keySerializer.sizeInBytes(key);
-        long valueSize = valueSerializer.sizeInBytes(value);
+        int keySize = keySerializer.sizeInBytes(key);
+        int valueSize = valueSerializer.sizeInBytes(value);
 
-        entryPointer = UnsafeUtils.allocate(Long.BYTES + keySize + Long.BYTES + valueSize);
+        entryPointer = UnsafeUtils.allocate(Integer.BYTES + keySize + Integer.BYTES + valueSize);
         UnsafeUtils.putLong(entryPointerAddresses + offset, entryPointer);
 
-        UnsafeUtils.putLong(entryPointer, keySize);
-        keySerializer.serialize(memoryWriter.resetTo(entryPointer + Long.BYTES, keySize), key);
+        UnsafeUtils.putInt(entryPointer, keySize);
+        keySerializer.serialize(memoryWriter.resetTo(entryPointer + Integer.BYTES, keySize), key);
 
-        UnsafeUtils.putLong(entryPointer + Long.BYTES + keySize, valueSize);
-        valueSerializer.serialize(memoryWriter.resetTo(entryPointer + Long.BYTES + keySize + Long.BYTES, valueSize), value);
+        UnsafeUtils.putInt(entryPointer + Integer.BYTES + keySize, valueSize);
+        valueSerializer.serialize(memoryWriter.resetTo(entryPointer + Integer.BYTES + keySize + Integer.BYTES, valueSize), value);
 
         return previous;
     }
@@ -440,8 +440,8 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
      * @return The entry's key
      */
     private K readKey(long entryPointer) {
-        long keySize = UnsafeUtils.getLong(entryPointer);
-        MemoryReader reader = memoryReader.resetTo(entryPointer + Long.BYTES, keySize);
+        int keySize = UnsafeUtils.getInt(entryPointer);
+        MemoryReader reader = memoryReader.resetTo(entryPointer + Integer.BYTES, keySize);
 
         return keySerializer.deserialize(reader);
     }
@@ -453,10 +453,10 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
      * @return The entry's value
      */
     private V readValue(long entryPointer) {
-        long keySize = UnsafeUtils.getLong(entryPointer);
-        long valuePointer = entryPointer + Long.BYTES + keySize;
-        long valueSize = UnsafeUtils.getLong(valuePointer);
-        MemoryReader reader = memoryReader.resetTo(valuePointer + Long.BYTES, valueSize);
+        int keySize = UnsafeUtils.getInt(entryPointer);
+        long valuePointer = entryPointer + Integer.BYTES + keySize;
+        int valueSize = UnsafeUtils.getInt(valuePointer);
+        MemoryReader reader = memoryReader.resetTo(valuePointer + Integer.BYTES, valueSize);
 
         return valueSerializer.deserialize(reader);
     }

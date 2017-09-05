@@ -38,7 +38,7 @@ public final class CharSerializer implements ObjectSerializer<Character> {
      * @return The size of the passed character in bytes
      */
     @Override
-    public long sizeInBytes(Character object) {
+    public int sizeInBytes(Character object) {
         return Character.BYTES;
     }
 }

@@ -38,7 +38,7 @@ public final class ShortSerializer implements ObjectSerializer<Short> {
      * @return The size of the passed short in bytes
      */
     @Override
-    public long sizeInBytes(Short object) {
+    public int sizeInBytes(Short object) {
         return Short.BYTES;
     }
 }

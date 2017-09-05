@@ -61,7 +61,7 @@ public final class StringSerializer implements ObjectSerializer<String> {
      * @return The size of the passed string in bytes
      */
     @Override
-    public long sizeInBytes(String object) {
+    public int sizeInBytes(String object) {
         return object.getBytes(encoding).length;
     }
 }

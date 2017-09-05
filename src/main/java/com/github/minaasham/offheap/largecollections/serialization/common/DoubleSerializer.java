@@ -38,7 +38,7 @@ public final class DoubleSerializer implements ObjectSerializer<Double> {
      * @return The size of the passed double in bytes
      */
     @Override
-    public long sizeInBytes(Double object) {
+    public int sizeInBytes(Double object) {
         return Double.BYTES;
     }
 }

@@ -172,13 +172,13 @@ public final class LargeHashSet<E> implements LargeSet<E> {
 
         size++;
 
-        long elementSize = elementSerializer.sizeInBytes(element);
+        int elementSize = elementSerializer.sizeInBytes(element);
 
-        elementPointer = UnsafeUtils.allocate(Long.BYTES + elementSize);
+        elementPointer = UnsafeUtils.allocate(Integer.BYTES + elementSize);
         UnsafeUtils.putLong(elementPointerAddresses + offset, elementPointer);
 
-        UnsafeUtils.putLong(elementPointer, elementSize);
-        elementSerializer.serialize(memoryWriter.resetTo(elementPointer + Long.BYTES, elementSize), element);
+        UnsafeUtils.putInt(elementPointer, elementSize);
+        elementSerializer.serialize(memoryWriter.resetTo(elementPointer + Integer.BYTES, elementSize), element);
 
         return true;
     }
@@ -412,8 +412,8 @@ public final class LargeHashSet<E> implements LargeSet<E> {
      * @return The entry's key
      */
     private E read(long elementPointer) {
-        long keySize = UnsafeUtils.getLong(elementPointer);
-        MemoryReader reader = memoryReader.resetTo(elementPointer + Long.BYTES, keySize);
+        int keySize = UnsafeUtils.getInt(elementPointer);
+        MemoryReader reader = memoryReader.resetTo(elementPointer + Integer.BYTES, keySize);
 
         return elementSerializer.deserialize(reader);
     }

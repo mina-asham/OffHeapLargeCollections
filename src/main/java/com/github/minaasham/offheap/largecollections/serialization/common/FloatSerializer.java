@@ -38,7 +38,7 @@ public final class FloatSerializer implements ObjectSerializer<Float> {
      * @return The size of the passed float in bytes
      */
     @Override
-    public long sizeInBytes(Float object) {
+    public int sizeInBytes(Float object) {
         return Float.BYTES;
     }
 }

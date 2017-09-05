@@ -30,5 +30,5 @@ public interface ObjectSerializer<T> {
      * @param object The object to the get the size of
      * @return The size of the passed object in bytes
      */
-    long sizeInBytes(T object);
+    int sizeInBytes(T object);
 }
