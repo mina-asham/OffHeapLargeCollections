@@ -274,6 +274,30 @@ public class LargeHashMapTest {
         }
     }
 
+    @SuppressWarnings("EqualsWithItself")
+    @Test
+    public void testEqualsSameObject() {
+        try (LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+            assertTrue(map.equals(map));
+        }
+    }
+
+    @SuppressWarnings("ObjectEqualsNull")
+    @Test
+    public void testEqualsNull() {
+        try (LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+            assertFalse(map.equals(null));
+        }
+    }
+
+    @SuppressWarnings("EqualsBetweenInconvertibleTypes")
+    @Test
+    public void testEqualsWrongType() {
+        try (LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+            assertFalse(map.equals(1));
+        }
+    }
+
     @Test
     public void testEqualsSizeMismatch() {
         try (LargeMap<String, String> map1 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
@@ -282,6 +306,16 @@ public class LargeHashMapTest {
             map2.put("key1", "value1");
 
             map1.put("key2", "value2");
+
+            assertFalse(map1.equals(map2));
+        }
+    }
+
+    @Test
+    public void testEqualsCloseMismatch() {
+        try (LargeMap<String, String> map1 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+            LargeMap<String, String> map2 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
+            map2.close();
 
             assertFalse(map1.equals(map2));
         }

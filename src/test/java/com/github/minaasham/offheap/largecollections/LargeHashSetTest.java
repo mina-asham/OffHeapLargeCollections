@@ -260,6 +260,30 @@ public class LargeHashSetTest {
         }
     }
 
+    @SuppressWarnings("EqualsWithItself")
+    @Test
+    public void testEqualsSameObject() {
+        try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+            assertTrue(set.equals(set));
+        }
+    }
+
+    @SuppressWarnings("ObjectEqualsNull")
+    @Test
+    public void testEqualsNull() {
+        try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+            assertFalse(set.equals(null));
+        }
+    }
+
+    @SuppressWarnings("EqualsBetweenInconvertibleTypes")
+    @Test
+    public void testEqualsWrongType() {
+        try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+            assertFalse(set.equals(1));
+        }
+    }
+
     @Test
     public void testEqualsSizeMismatch() {
         try (LargeSet<String> set1 = LargeHashSet.of(STRING_SERIALIZER, 5);
@@ -268,6 +292,16 @@ public class LargeHashSetTest {
             set2.add("element1");
 
             set1.add("element2");
+
+            assertFalse(set1.equals(set2));
+        }
+    }
+
+    @Test
+    public void testEqualsCloseMismatch() {
+        try (LargeSet<String> set1 = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+            LargeSet<String> set2 = LargeHashSet.of(STRING_SERIALIZER, 5);
+            set2.close();
 
             assertFalse(set1.equals(set2));
         }
