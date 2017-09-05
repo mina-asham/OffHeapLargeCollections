@@ -46,4 +46,12 @@ public interface LargeMap<K, V> extends Iterable<Entry<K, V>>, AutoCloseable {
      * @return The size of the map
      */
     long size();
+
+    /**
+     * Closes this resource, relinquishing any underlying resources.
+     * This method is invoked automatically on objects managed by the
+     * {@code try}-with-resources statement.
+     */
+    @Override
+    void close();
 }
