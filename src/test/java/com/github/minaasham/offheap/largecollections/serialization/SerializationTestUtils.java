@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.function.Supplier;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 
 @UtilityClass
@@ -30,6 +31,6 @@ public final class SerializationTestUtils {
         for (int i = 0; i < bytes.length; i++) {
             bytes[i] = (byte) (33 + RANDOM.nextInt(128 - 33));
         }
-        return new String(bytes);
+        return new String(bytes, UTF_8);
     }
 }

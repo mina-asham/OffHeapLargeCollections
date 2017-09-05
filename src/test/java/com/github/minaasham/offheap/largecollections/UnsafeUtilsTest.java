@@ -1,5 +1,6 @@
 package com.github.minaasham.offheap.largecollections;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mockit.Mock;
 import mockit.MockUp;
 import mockit.integration.junit4.JMockit;
@@ -22,12 +23,15 @@ public class UnsafeUtilsTest {
         long expectedAddress = 123;
         long expectedBytes = 456;
         new MockUp<Unsafe>() {
+
+            @SuppressFBWarnings("UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS")
             @Mock
             long allocateMemory(long bytes) {
                 assertEquals(expectedBytes, bytes);
                 return expectedAddress;
             }
 
+            @SuppressFBWarnings("UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS")
             @Mock
             void setMemory(long address, long bytes, byte value) {
                 assertEquals(expectedAddress, address);
@@ -44,6 +48,8 @@ public class UnsafeUtilsTest {
     public void testFree() {
         long expectedAddress = 123;
         new MockUp<Unsafe>() {
+
+            @SuppressFBWarnings("UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS")
             @Mock
             void freeMemory(long address) {
                 assertEquals(expectedAddress, address);
