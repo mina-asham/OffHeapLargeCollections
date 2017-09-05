@@ -80,7 +80,7 @@ public final class LargeHashSet<E> implements LargeSet<E> {
     /**
      * Factory method for creating a {@link LargeHashSet} object
      *
-     * @param elementSerializer The key serializer
+     * @param elementSerializer The element serializer
      * @param <E>               The element type
      * @return A {@link LargeHashSet} object
      */
@@ -91,7 +91,7 @@ public final class LargeHashSet<E> implements LargeSet<E> {
     /**
      * Factory method for creating a {@link LargeHashSet} object
      *
-     * @param elementSerializer The key serializer
+     * @param elementSerializer The element serializer
      * @param loadFactor        The load factor
      * @param <E>               The element type
      * @return A {@link LargeHashSet} object
@@ -223,7 +223,7 @@ public final class LargeHashSet<E> implements LargeSet<E> {
     }
 
     /**
-     * Clear the set from all keys and values
+     * Clear the set from all elements
      */
     @Override
     public void clear() {
@@ -393,8 +393,8 @@ public final class LargeHashSet<E> implements LargeSet<E> {
         for (int i = 0; i < capacity; i++) {
             long entryPointer = UnsafeUtils.getLong(elementPointerAddresses + i * Long.BYTES);
             if (entryPointer != 0) {
-                E key = read(entryPointer);
-                long offset = findOffset(key, newCapacity, newEntryPointerAddresses);
+                E element = read(entryPointer);
+                long offset = findOffset(element, newCapacity, newEntryPointerAddresses);
                 UnsafeUtils.putLong(newEntryPointerAddresses + offset, entryPointer);
             }
         }
@@ -406,14 +406,14 @@ public final class LargeHashSet<E> implements LargeSet<E> {
     }
 
     /**
-     * Read a key from the map given the entry address pointer
+     * Read an element from the map given the entry address pointer
      *
      * @param elementPointer The entry address pointer
-     * @return The entry's key
+     * @return The element
      */
     private E read(long elementPointer) {
-        int keySize = UnsafeUtils.getInt(elementPointer);
-        MemoryReader reader = memoryReader.resetTo(elementPointer + Integer.BYTES, keySize);
+        int elementSize = UnsafeUtils.getInt(elementPointer);
+        MemoryReader reader = memoryReader.resetTo(elementPointer + Integer.BYTES, elementSize);
 
         return elementSerializer.deserialize(reader);
     }
