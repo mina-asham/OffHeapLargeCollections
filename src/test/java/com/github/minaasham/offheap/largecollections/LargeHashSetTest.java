@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
 public class LargeHashSetTest {
 
     private static final StringSerializer STRING_SERIALIZER = new StringSerializer();
-    private static final LargeHashSet<String> EMPTY_SET = LargeHashSet.of(STRING_SERIALIZER, 1);
+    private static final LargeSet<String> EMPTY_SET = LargeHashSet.of(STRING_SERIALIZER, 1);
 
     @AfterClass
     public static void tearDown() {
@@ -90,7 +90,7 @@ public class LargeHashSetTest {
 
     @Test
     public void testContains() {
-        try (LargeHashSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+        try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set.add("element1");
             set.add("element2");
 
@@ -101,7 +101,7 @@ public class LargeHashSetTest {
 
     @Test
     public void testAdd() {
-        try (LargeHashSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+        try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             assertTrue(set.add("element1"));
             assertTrue(set.add("element2"));
 
@@ -112,7 +112,7 @@ public class LargeHashSetTest {
 
     @Test
     public void testRemove() {
-        try (LargeHashSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+        try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set.add("element1");
             set.add("element2");
 
@@ -123,7 +123,7 @@ public class LargeHashSetTest {
 
     @Test
     public void testRemoveAll() {
-        try (LargeHashSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+        try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             List<String> randomValues = IntStream.range(0, 10000).mapToObj(ignored -> randomString()).collect(toList());
 
             randomValues.forEach(set::add);
@@ -135,7 +135,7 @@ public class LargeHashSetTest {
 
     @Test
     public void testClear() {
-        try (LargeHashSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+        try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set.add("element1");
             set.add("element2");
             set.clear();
@@ -148,7 +148,7 @@ public class LargeHashSetTest {
 
     @Test
     public void testSize() {
-        try (LargeHashSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+        try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set.add("element1");
             set.add("element2");
 
@@ -158,7 +158,7 @@ public class LargeHashSetTest {
 
     @Test
     public void testIterator() {
-        try (LargeHashSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+        try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set.add("element1");
             set.add("element2");
 
@@ -173,7 +173,7 @@ public class LargeHashSetTest {
 
     @Test(expected = NoSuchElementException.class)
     public void testIteratorThrowsIfNoNext() {
-        try (LargeHashSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+        try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set.add("element1");
             set.add("element2");
 
@@ -189,7 +189,7 @@ public class LargeHashSetTest {
 
     @Test(expected = ConcurrentModificationException.class)
     public void testIteratorThrowsIfSetChanges() {
-        try (LargeHashSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+        try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set.add("element1");
 
             Iterator<String> iterator = set.iterator();
@@ -202,56 +202,56 @@ public class LargeHashSetTest {
 
     @Test(expected = IllegalStateException.class)
     public void testThrowsIfClosedWithContains() {
-        LargeHashSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
+        LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
         set.close();
         set.contains("");
     }
 
     @Test(expected = IllegalStateException.class)
     public void testThrowsIfClosedWithAdd() {
-        LargeHashSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
+        LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
         set.close();
         set.add("");
     }
 
     @Test(expected = IllegalStateException.class)
     public void testThrowsIfClosedWithRemove() {
-        LargeHashSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
+        LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
         set.close();
         set.remove("");
     }
 
     @Test(expected = IllegalStateException.class)
     public void testThrowsIfClosedWithClear() {
-        LargeHashSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
+        LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
         set.close();
         set.clear();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testThrowsIfClosedWithSize() {
-        LargeHashSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
+        LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
         set.close();
         set.size();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testThrowsIfClosedWithIterator() {
-        LargeHashSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
+        LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
         set.close();
         set.iterator();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testThrowsIfClosedWithClose() {
-        LargeHashSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
+        LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
         set.close();
         set.close();
     }
 
     @Test
     public void testHashCode() {
-        try (LargeHashSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+        try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set.add("element1");
             set.add("element2");
 
@@ -262,8 +262,8 @@ public class LargeHashSetTest {
 
     @Test
     public void testEqualsSizeMismatch() {
-        try (LargeHashSet<String> set1 = LargeHashSet.of(STRING_SERIALIZER, 5);
-             LargeHashSet<String> set2 = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+        try (LargeSet<String> set1 = LargeHashSet.of(STRING_SERIALIZER, 5);
+             LargeSet<String> set2 = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set1.add("element1");
             set2.add("element1");
 
@@ -275,8 +275,8 @@ public class LargeHashSetTest {
 
     @Test
     public void testEqualsNotEqual() {
-        try (LargeHashSet<String> set1 = LargeHashSet.of(STRING_SERIALIZER, 5);
-             LargeHashSet<String> set2 = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+        try (LargeSet<String> set1 = LargeHashSet.of(STRING_SERIALIZER, 5);
+             LargeSet<String> set2 = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set1.add("element1");
             set2.add("element2");
 
@@ -286,8 +286,8 @@ public class LargeHashSetTest {
 
     @Test
     public void testEquals() {
-        try (LargeHashSet<String> set1 = LargeHashSet.of(STRING_SERIALIZER, 5);
-             LargeHashSet<String> set2 = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+        try (LargeSet<String> set1 = LargeHashSet.of(STRING_SERIALIZER, 5);
+             LargeSet<String> set2 = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set1.add("element1");
             set2.add("element1");
 
@@ -300,7 +300,7 @@ public class LargeHashSetTest {
 
     @Test
     public void testToString() {
-        try (LargeHashSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+        try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set.add("element1");
             set.add("element2");
 
@@ -319,7 +319,7 @@ public class LargeHashSetTest {
 
     @Test
     public void testStress() {
-        try (LargeHashSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+        try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             Set<String> expectedSet = new HashSet<>();
 
             // Add

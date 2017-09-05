@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 public class LargeHashMapTest {
 
     private static final StringSerializer STRING_SERIALIZER = new StringSerializer();
-    private static final LargeHashMap<String, String> EMPTY_MAP = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 1);
+    private static final LargeMap<String, String> EMPTY_MAP = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 1);
 
     @AfterClass
     public static void tearDown() {
@@ -104,7 +104,7 @@ public class LargeHashMapTest {
 
     @Test
     public void testGet() {
-        try (LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+        try (LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
             map.put("key1", "value1");
             map.put("key2", "value2");
 
@@ -115,7 +115,7 @@ public class LargeHashMapTest {
 
     @Test
     public void testPut() {
-        try (LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+        try (LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
             assertNull(map.put("key1", "value1"));
             assertNull(map.put("key2", "value2"));
 
@@ -126,7 +126,7 @@ public class LargeHashMapTest {
 
     @Test
     public void testRemove() {
-        try (LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+        try (LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
             map.put("key1", "value1");
             map.put("key2", "value2");
 
@@ -137,7 +137,7 @@ public class LargeHashMapTest {
 
     @Test
     public void testRemoveAll() {
-        try (LargeHashMap<String, String> set = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+        try (LargeMap<String, String> set = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
             List<String> randomValues = IntStream.range(0, 10000).mapToObj(ignored -> randomString()).collect(toList());
 
             randomValues.forEach(key -> set.put(key, randomString()));
@@ -149,7 +149,7 @@ public class LargeHashMapTest {
 
     @Test
     public void testClear() {
-        try (LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+        try (LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
             map.put("key1", "value1");
             map.put("key2", "value2");
             map.clear();
@@ -162,7 +162,7 @@ public class LargeHashMapTest {
 
     @Test
     public void testSize() {
-        try (LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+        try (LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
             map.put("key1", "value1");
             map.put("key2", "value2");
 
@@ -172,7 +172,7 @@ public class LargeHashMapTest {
 
     @Test
     public void testIterator() {
-        try (LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+        try (LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
             map.put("key1", "value1");
             map.put("key2", "value2");
 
@@ -187,7 +187,7 @@ public class LargeHashMapTest {
 
     @Test(expected = NoSuchElementException.class)
     public void testIteratorThrowsIfNoNext() {
-        try (LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+        try (LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
             map.put("key1", "value1");
             map.put("key2", "value2");
 
@@ -203,7 +203,7 @@ public class LargeHashMapTest {
 
     @Test(expected = ConcurrentModificationException.class)
     public void testIteratorThrowsIfMapChanges() {
-        try (LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+        try (LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
             map.put("key1", "value1");
 
             Iterator<Entry<String, String>> iterator = map.iterator();
@@ -216,56 +216,56 @@ public class LargeHashMapTest {
 
     @Test(expected = IllegalStateException.class)
     public void testThrowsIfClosedWithGet() {
-        LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
+        LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
         map.close();
         map.get("");
     }
 
     @Test(expected = IllegalStateException.class)
     public void testThrowsIfClosedWithPut() {
-        LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
+        LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
         map.close();
         map.put("", "");
     }
 
     @Test(expected = IllegalStateException.class)
     public void testThrowsIfClosedWithRemove() {
-        LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
+        LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
         map.close();
         map.remove("");
     }
 
     @Test(expected = IllegalStateException.class)
     public void testThrowsIfClosedWithClear() {
-        LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
+        LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
         map.close();
         map.clear();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testThrowsIfClosedWithSize() {
-        LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
+        LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
         map.close();
         map.size();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testThrowsIfClosedWithIterator() {
-        LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
+        LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
         map.close();
         map.iterator();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testThrowsIfClosedWithClose() {
-        LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
+        LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
         map.close();
         map.close();
     }
 
     @Test
     public void testHashCode() {
-        try (LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+        try (LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
             map.put("key1", "value1");
             map.put("key2", "value2");
 
@@ -276,8 +276,8 @@ public class LargeHashMapTest {
 
     @Test
     public void testEqualsSizeMismatch() {
-        try (LargeHashMap<String, String> map1 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
-             LargeHashMap<String, String> map2 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+        try (LargeMap<String, String> map1 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
+             LargeMap<String, String> map2 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
             map1.put("key1", "value1");
             map2.put("key1", "value1");
 
@@ -289,8 +289,8 @@ public class LargeHashMapTest {
 
     @Test
     public void testEqualsNotEqual() {
-        try (LargeHashMap<String, String> map1 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
-             LargeHashMap<String, String> map2 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+        try (LargeMap<String, String> map1 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
+             LargeMap<String, String> map2 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
             map1.put("key1", "value1");
             map2.put("key2", "value2");
 
@@ -300,8 +300,8 @@ public class LargeHashMapTest {
 
     @Test
     public void testEquals() {
-        try (LargeHashMap<String, String> map1 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
-             LargeHashMap<String, String> map2 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+        try (LargeMap<String, String> map1 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
+             LargeMap<String, String> map2 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
             map1.put("key1", "value1");
             map2.put("key1", "value1");
 
@@ -314,7 +314,7 @@ public class LargeHashMapTest {
 
     @Test
     public void testToString() {
-        try (LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+        try (LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
             map.put("key1", "value1");
             map.put("key2", "value2");
 
@@ -333,7 +333,7 @@ public class LargeHashMapTest {
 
     @Test
     public void testStress() {
-        try (LargeHashMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+        try (LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
             Map<String, String> expectedMap = new HashMap<>();
 
             // Put
