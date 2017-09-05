@@ -1,13 +1,20 @@
 package com.github.minaasham.offheap.largecollections.serialization.common;
 
+import com.github.minaasham.offheap.largecollections.serialization.FixedSizeObjectSerializer;
 import com.github.minaasham.offheap.largecollections.serialization.MemoryReader;
 import com.github.minaasham.offheap.largecollections.serialization.MemoryWriter;
-import com.github.minaasham.offheap.largecollections.serialization.ObjectSerializer;
 
 /**
  * CharSerializer, the implementation of ObjectSerializer for the character type
  */
-public final class CharSerializer implements ObjectSerializer<Character> {
+public final class CharSerializer extends FixedSizeObjectSerializer<Character> {
+
+    /**
+     * CharSerializer constructor
+     */
+    public CharSerializer() {
+        super(Character.BYTES);
+    }
 
     /**
      * Serializes a character using a memory writer
@@ -29,16 +36,5 @@ public final class CharSerializer implements ObjectSerializer<Character> {
     @Override
     public Character deserialize(MemoryReader reader) {
         return reader.readChar();
-    }
-
-    /**
-     * Gets the character size in bytes
-     *
-     * @param object The character to the get the size of
-     * @return The size of the passed character in bytes
-     */
-    @Override
-    public int sizeInBytes(Character object) {
-        return Character.BYTES;
     }
 }

@@ -1,13 +1,20 @@
 package com.github.minaasham.offheap.largecollections.serialization.common;
 
+import com.github.minaasham.offheap.largecollections.serialization.FixedSizeObjectSerializer;
 import com.github.minaasham.offheap.largecollections.serialization.MemoryReader;
 import com.github.minaasham.offheap.largecollections.serialization.MemoryWriter;
-import com.github.minaasham.offheap.largecollections.serialization.ObjectSerializer;
 
 /**
  * IntSerializer, the implementation of ObjectSerializer for the integer type
  */
-public final class IntSerializer implements ObjectSerializer<Integer> {
+public final class IntSerializer extends FixedSizeObjectSerializer<Integer> {
+
+    /**
+     * IntSerializer constructor
+     */
+    public IntSerializer() {
+        super(Integer.BYTES);
+    }
 
     /**
      * Serializes an integer using a memory writer
@@ -29,16 +36,5 @@ public final class IntSerializer implements ObjectSerializer<Integer> {
     @Override
     public Integer deserialize(MemoryReader reader) {
         return reader.readInt();
-    }
-
-    /**
-     * Gets the integer size in bytes
-     *
-     * @param object The integer to the get the size of
-     * @return The size of the passed integer in bytes
-     */
-    @Override
-    public int sizeInBytes(Integer object) {
-        return Integer.BYTES;
     }
 }

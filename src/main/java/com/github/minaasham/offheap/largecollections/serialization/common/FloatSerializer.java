@@ -1,13 +1,20 @@
 package com.github.minaasham.offheap.largecollections.serialization.common;
 
+import com.github.minaasham.offheap.largecollections.serialization.FixedSizeObjectSerializer;
 import com.github.minaasham.offheap.largecollections.serialization.MemoryReader;
 import com.github.minaasham.offheap.largecollections.serialization.MemoryWriter;
-import com.github.minaasham.offheap.largecollections.serialization.ObjectSerializer;
 
 /**
  * FloatSerializer, the implementation of ObjectSerializer for the float type
  */
-public final class FloatSerializer implements ObjectSerializer<Float> {
+public final class FloatSerializer extends FixedSizeObjectSerializer<Float> {
+
+    /**
+     * FloatSerializer constructor
+     */
+    public FloatSerializer() {
+        super(Float.BYTES);
+    }
 
     /**
      * Serializes a float using a memory writer
@@ -29,16 +36,5 @@ public final class FloatSerializer implements ObjectSerializer<Float> {
     @Override
     public Float deserialize(MemoryReader reader) {
         return reader.readFloat();
-    }
-
-    /**
-     * Gets the float size in bytes
-     *
-     * @param object The float to the get the size of
-     * @return The size of the passed float in bytes
-     */
-    @Override
-    public int sizeInBytes(Float object) {
-        return Float.BYTES;
     }
 }

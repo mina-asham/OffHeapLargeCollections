@@ -1,13 +1,20 @@
 package com.github.minaasham.offheap.largecollections.serialization.common;
 
+import com.github.minaasham.offheap.largecollections.serialization.FixedSizeObjectSerializer;
 import com.github.minaasham.offheap.largecollections.serialization.MemoryReader;
 import com.github.minaasham.offheap.largecollections.serialization.MemoryWriter;
-import com.github.minaasham.offheap.largecollections.serialization.ObjectSerializer;
 
 /**
  * LongSerializer, the implementation of ObjectSerializer for the long type
  */
-public final class LongSerializer implements ObjectSerializer<Long> {
+public final class LongSerializer extends FixedSizeObjectSerializer<Long> {
+
+    /**
+     * LongSerializer constructor
+     */
+    public LongSerializer() {
+        super(Long.BYTES);
+    }
 
     /**
      * Serializes a long using a memory writer
@@ -29,16 +36,5 @@ public final class LongSerializer implements ObjectSerializer<Long> {
     @Override
     public Long deserialize(MemoryReader reader) {
         return reader.readLong();
-    }
-
-    /**
-     * Gets the long size in bytes
-     *
-     * @param object The long to the get the size of
-     * @return The size of the passed long in bytes
-     */
-    @Override
-    public int sizeInBytes(Long object) {
-        return Long.BYTES;
     }
 }

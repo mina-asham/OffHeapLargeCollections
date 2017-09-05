@@ -1,13 +1,20 @@
 package com.github.minaasham.offheap.largecollections.serialization.common;
 
+import com.github.minaasham.offheap.largecollections.serialization.FixedSizeObjectSerializer;
 import com.github.minaasham.offheap.largecollections.serialization.MemoryReader;
 import com.github.minaasham.offheap.largecollections.serialization.MemoryWriter;
-import com.github.minaasham.offheap.largecollections.serialization.ObjectSerializer;
 
 /**
  * ShortSerializer, the implementation of ObjectSerializer for the short type
  */
-public final class ShortSerializer implements ObjectSerializer<Short> {
+public final class ShortSerializer extends FixedSizeObjectSerializer<Short> {
+
+    /**
+     * ShortSerializer constructor
+     */
+    public ShortSerializer() {
+        super(Short.BYTES);
+    }
 
     /**
      * Serializes a short using a memory writer
@@ -29,16 +36,5 @@ public final class ShortSerializer implements ObjectSerializer<Short> {
     @Override
     public Short deserialize(MemoryReader reader) {
         return reader.readShort();
-    }
-
-    /**
-     * Gets the short size in bytes
-     *
-     * @param object The short to the get the size of
-     * @return The size of the passed short in bytes
-     */
-    @Override
-    public int sizeInBytes(Short object) {
-        return Short.BYTES;
     }
 }

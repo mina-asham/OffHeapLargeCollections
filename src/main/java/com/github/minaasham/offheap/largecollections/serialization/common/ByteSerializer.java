@@ -1,13 +1,20 @@
 package com.github.minaasham.offheap.largecollections.serialization.common;
 
+import com.github.minaasham.offheap.largecollections.serialization.FixedSizeObjectSerializer;
 import com.github.minaasham.offheap.largecollections.serialization.MemoryReader;
 import com.github.minaasham.offheap.largecollections.serialization.MemoryWriter;
-import com.github.minaasham.offheap.largecollections.serialization.ObjectSerializer;
 
 /**
  * ByteSerializer, the implementation of ObjectSerializer for the byte type
  */
-public final class ByteSerializer implements ObjectSerializer<Byte> {
+public final class ByteSerializer extends FixedSizeObjectSerializer<Byte> {
+
+    /**
+     * ByteSerializer constructor
+     */
+    public ByteSerializer() {
+        super(Byte.BYTES);
+    }
 
     /**
      * Serializes a byte using a memory writer
@@ -29,16 +36,5 @@ public final class ByteSerializer implements ObjectSerializer<Byte> {
     @Override
     public Byte deserialize(MemoryReader reader) {
         return reader.readByte();
-    }
-
-    /**
-     * Gets the byte size in bytes
-     *
-     * @param object The byte to the get the size of
-     * @return The size of the passed byte in bytes
-     */
-    @Override
-    public int sizeInBytes(Byte object) {
-        return Byte.BYTES;
     }
 }

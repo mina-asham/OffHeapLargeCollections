@@ -1,13 +1,20 @@
 package com.github.minaasham.offheap.largecollections.serialization.common;
 
+import com.github.minaasham.offheap.largecollections.serialization.FixedSizeObjectSerializer;
 import com.github.minaasham.offheap.largecollections.serialization.MemoryReader;
 import com.github.minaasham.offheap.largecollections.serialization.MemoryWriter;
-import com.github.minaasham.offheap.largecollections.serialization.ObjectSerializer;
 
 /**
  * BooleanSerializer, the implementation of ObjectSerializer for the boolean type
  */
-public final class BooleanSerializer implements ObjectSerializer<Boolean> {
+public final class BooleanSerializer extends FixedSizeObjectSerializer<Boolean> {
+
+    /**
+     * BooleanSerializer constructor
+     */
+    public BooleanSerializer() {
+        super(Byte.BYTES);
+    }
 
     /**
      * Serializes a boolean using a memory writer
@@ -29,16 +36,5 @@ public final class BooleanSerializer implements ObjectSerializer<Boolean> {
     @Override
     public Boolean deserialize(MemoryReader reader) {
         return reader.readByte() == (byte) 1;
-    }
-
-    /**
-     * Gets the boolean size in bytes
-     *
-     * @param object The boolean to the get the size of
-     * @return The size of the passed boolean in bytes
-     */
-    @Override
-    public int sizeInBytes(Boolean object) {
-        return Byte.BYTES;
     }
 }
