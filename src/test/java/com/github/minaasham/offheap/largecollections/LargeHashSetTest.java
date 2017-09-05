@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.IntStream;
@@ -14,6 +15,7 @@ import java.util.stream.IntStream;
 import static com.github.minaasham.offheap.largecollections.serialization.SerializationTestUtils.randomString;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
+import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.*;
 
 public class LargeHashSetTest {
@@ -116,6 +118,18 @@ public class LargeHashSetTest {
 
             assertTrue(set.remove("element1"));
             assertTrue(set.remove("element2"));
+        }
+    }
+
+    @Test
+    public void testRemoveAll() {
+        try (LargeHashSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
+            List<String> randomValues = IntStream.range(0, 10000).mapToObj(ignored -> randomString()).collect(toList());
+
+            randomValues.forEach(set::add);
+            randomValues.forEach(set::remove);
+
+            assertEquals(0, set.size());
         }
     }
 

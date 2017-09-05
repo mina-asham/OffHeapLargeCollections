@@ -9,6 +9,7 @@ import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
@@ -18,6 +19,7 @@ import java.util.stream.IntStream;
 import static com.github.minaasham.offheap.largecollections.serialization.SerializationTestUtils.randomString;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
+import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.*;
 
 public class LargeHashMapTest {
@@ -130,6 +132,18 @@ public class LargeHashMapTest {
 
             assertEquals("value1", map.remove("key1"));
             assertEquals("value2", map.remove("key2"));
+        }
+    }
+
+    @Test
+    public void testRemoveAll() {
+        try (LargeHashMap<String, String> set = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+            List<String> randomValues = IntStream.range(0, 10000).mapToObj(ignored -> randomString()).collect(toList());
+
+            randomValues.forEach(key -> set.put(key, randomString()));
+            randomValues.forEach(set::remove);
+
+            assertEquals(0, set.size());
         }
     }
 
