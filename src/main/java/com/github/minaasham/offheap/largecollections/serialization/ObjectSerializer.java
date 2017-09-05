@@ -3,8 +3,10 @@ package com.github.minaasham.offheap.largecollections.serialization;
 /**
  * ObjectSerializer, the main interface for binary serialization/deserialization
  * Users will have to implement this interface for both keys and values
+ * {@link FixedSizeObjectSerializer} is a more optimized version if the object size is constant
  *
  * @param <T> The type of object to serialize from or deserialize to
+ * @see FixedSizeObjectSerializer
  */
 public interface ObjectSerializer<T> {
 
