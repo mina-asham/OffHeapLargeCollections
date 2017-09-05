@@ -11,6 +11,9 @@ Planned to support for version 1.0:
 * **LargeTreeSet**
 * **LargeTreeMap**  
 
+## Development Snapshots
+[com.github.mina-asham:offheap-largecollections:1.0-SNAPSHOT](https://oss.sonatype.org/content/repositories/snapshots/com/github/mina-asham/offheap-largecollections/1.0-SNAPSHOT/)
+
 ## JDK Support
 Currently this is developed and tested on ***Java 8***, best effort support will be available for ***Java 7*** & ***Java 9 Alpha/Beta/RC***
 
