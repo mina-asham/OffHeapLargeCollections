@@ -34,7 +34,10 @@ public final class StringSerializer implements ObjectSerializer<String> {
      */
     @Override
     public void serialize(MemoryWriter writer, String object) {
-        for (byte b : object.getBytes(encoding)) {
+        byte[] bytes = object.getBytes(encoding);
+        writer.writeInt(bytes.length);
+
+        for (byte b : bytes) {
             writer.writeByte(b);
         }
     }
@@ -47,7 +50,7 @@ public final class StringSerializer implements ObjectSerializer<String> {
      */
     @Override
     public String deserialize(MemoryReader reader) {
-        byte[] bytes = new byte[(int) reader.availableBytes()];
+        byte[] bytes = new byte[reader.readInt()];
         for (int i = 0; i < bytes.length; i++) {
             bytes[i] = reader.readByte();
         }
@@ -62,6 +65,6 @@ public final class StringSerializer implements ObjectSerializer<String> {
      */
     @Override
     public int sizeInBytes(String object) {
-        return object.getBytes(encoding).length;
+        return Integer.BYTES + object.getBytes(encoding).length;
     }
 }
