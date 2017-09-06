@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.function.Supplier;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 @UtilityClass
@@ -22,7 +23,14 @@ public final class SerializationTestUtils {
 
         serializer.serialize(writer, value);
         buffer.flip();
-        assertEquals(value, serializer.deserialize(reader));
+
+        T actualValue = serializer.deserialize(reader);
+
+        if (value.getClass().isArray()) {
+            assertArrayEquals((Object[]) value, (Object[]) actualValue);
+        } else {
+            assertEquals(value, actualValue);
+        }
     }
 
     public static String randomString() {
@@ -32,5 +40,9 @@ public final class SerializationTestUtils {
             bytes[i] = (byte) (33 + RANDOM.nextInt(128 - 33));
         }
         return new String(bytes, UTF_8);
+    }
+
+    public static int randomInt() {
+        return RANDOM.nextInt();
     }
 }
