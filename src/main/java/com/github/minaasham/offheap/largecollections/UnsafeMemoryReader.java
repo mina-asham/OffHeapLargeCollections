@@ -31,11 +31,6 @@ final class UnsafeMemoryReader implements MemoryReader {
         return this;
     }
 
-    @Override
-    public long availableBytes() {
-        return bytesLeft;
-    }
-
     /**
      * Reads a byte
      *

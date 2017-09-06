@@ -10,11 +10,6 @@ public class BufferMemoryReader implements MemoryReader {
     private final ByteBuffer buffer;
 
     @Override
-    public long availableBytes() {
-        return buffer.remaining();
-    }
-
-    @Override
     public byte readByte() {
         return buffer.get();
     }

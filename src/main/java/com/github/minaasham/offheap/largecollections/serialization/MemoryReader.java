@@ -8,13 +8,6 @@ package com.github.minaasham.offheap.largecollections.serialization;
 public interface MemoryReader {
 
     /**
-     * Gets the number of available bytes in the reader
-     *
-     * @return The number of available bytes
-     */
-    long availableBytes();
-
-    /**
      * Reads a byte
      *
      * @return The byte read
