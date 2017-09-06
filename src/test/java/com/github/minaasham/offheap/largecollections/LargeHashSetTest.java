@@ -368,6 +368,31 @@ public class LargeHashSetTest {
     }
 
     @Test
+    public void testBadHashAndHighLoad() {
+        try (LargeSet<BadHashInteger> set = LargeHashSet.of(new BadHashIntegerSerializer(), 0.99, 1020)) {
+            int limit = 1000;
+
+            for (int i = 0; i <= limit; i++) {
+                assertTrue(set.add(new BadHashInteger(i)));
+            }
+
+            for (int i = limit; i >= 0; i--) {
+                assertTrue(set.remove(new BadHashInteger(i)));
+            }
+
+            for (int i = limit; i >= 0; i--) {
+                assertTrue(set.add(new BadHashInteger(i)));
+            }
+
+            for (int i = 0; i <= limit; i++) {
+                assertTrue(set.remove(new BadHashInteger(i)));
+            }
+
+            assertEquals(0, set.size());
+        }
+    }
+
+    @Test
     public void testStress() {
         try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             Set<String> expectedSet = new HashSet<>();

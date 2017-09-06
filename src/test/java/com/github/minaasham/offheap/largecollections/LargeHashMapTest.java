@@ -382,6 +382,31 @@ public class LargeHashMapTest {
     }
 
     @Test
+    public void testBadHashAndHighLoad() {
+        try (LargeMap<BadHashInteger, Integer> map = LargeHashMap.of(new BadHashIntegerSerializer(), new IntSerializer(), 0.99, 1020)) {
+            int limit = 1000;
+
+            for (int i = 0; i <= limit; i++) {
+                assertNull(map.put(new BadHashInteger(i), i));
+            }
+
+            for (int i = limit; i >= 0; i--) {
+                assertEquals((Integer) i, map.remove(new BadHashInteger(i)));
+            }
+
+            for (int i = limit; i >= 0; i--) {
+                assertNull(map.put(new BadHashInteger(i), i));
+            }
+
+            for (int i = 0; i <= limit; i++) {
+                assertEquals((Integer) i, map.remove(new BadHashInteger(i)));
+            }
+
+            assertEquals(0, map.size());
+        }
+    }
+
+    @Test
     public void testStress() {
         try (LargeMap<String, String> map = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
             Map<String, String> expectedMap = new HashMap<>();
