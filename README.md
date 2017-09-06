@@ -29,7 +29,12 @@ try (Stream<String> lines = Files.lines(Paths.get("nameToAge.csv"))) {
 
 // Do not forgot to close the map to release the allocated memory
 nameToAge.close();
-```  
+```
+
+## Serializers
+Off heap large collections requires the use of serializers to serialize and deserialize the data into and out of memory; there are two types of serializers:
+* **Variable size serializers:** As the name implies these should be used to store variable sized data, the downside here is using an ***additional 4 bytes per object*** storing it's size in bytes, there are two implemented in the framework `StringSerializer` and `ArraySerializer`, you can easily implement your own by implementing the `ObjectSerializer` interface
+* **Fixed size serializers:** These store fixed width data, hence it doesn't use the additional 4 bytes required by the variable serializers, the framework currently implements all the basic types (`BooleanSerializer`, `ByteSerializer`, `CharSerializer`, `DoubleSerializer`, `DoubleSerializer`, `FloatSerializer`, `IntSerializer`, `LongSerializer`, `ShortSerializer`) using this method, you can also easily implement your own by extending the `FixedSizeObjectSerializer` abstract base class
 
 ## Maven Snippet
 ```xml
