@@ -16,7 +16,7 @@ public final class SerializationTestUtils {
 
     public static <T> void testRoundtrip(T value, Supplier<ObjectSerializer<T>> serializerSupplier) {
         ObjectSerializer<T> serializer = serializerSupplier.get();
-        ByteBuffer buffer = ByteBuffer.allocate((int) serializer.sizeInBytes(value));
+        ByteBuffer buffer = ByteBuffer.allocate(serializer.sizeInBytes(value));
         MemoryReader reader = new BufferMemoryReader(buffer);
         MemoryWriter writer = new BufferMemoryWriter(buffer);
 
