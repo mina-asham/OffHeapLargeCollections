@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import static java.lang.ThreadLocal.withInitial;
 
 /**
  * LargeHashSet, an open address hash set that can handle a large number of entries
@@ -32,14 +35,19 @@ public final class LargeHashSet<E> implements LargeSet<E> {
     private static final int DEFAULT_CAPACITY = 512;
 
     /**
+     * The lock used to guarantee thread safety in set operations
+     */
+    private final ReentrantReadWriteLock lock;
+
+    /**
      * The memory reader passed to element serializer, it's reset every time
      */
-    private final UnsafeMemoryReader memoryReader;
+    private final ThreadLocal<UnsafeMemoryReader> memoryReader;
 
     /**
      * The memory writer passed to element serializer, it's reset every time
      */
-    private final UnsafeMemoryWriter memoryWriter;
+    private final ThreadLocal<UnsafeMemoryWriter> memoryWriter;
 
     /**
      * The element object serializer
@@ -138,8 +146,9 @@ public final class LargeHashSet<E> implements LargeSet<E> {
 
         boolean fixedSize = elementSerializer instanceof FixedSizeObjectSerializer;
         return new LargeHashSet<>(
-                new UnsafeMemoryReader(),
-                new UnsafeMemoryWriter(),
+                new ReentrantReadWriteLock(),
+                withInitial(UnsafeMemoryReader::new),
+                withInitial(UnsafeMemoryWriter::new),
                 elementSerializer,
                 fixedSize,
                 fixedSize ? 0 : Integer.BYTES,
@@ -160,12 +169,16 @@ public final class LargeHashSet<E> implements LargeSet<E> {
      */
     @Override
     public boolean contains(@NonNull E element) {
-        throwIfClosed();
-        long offset = findOffset(element, capacity, elementPointerAddresses);
-        long entryPointer = UnsafeUtils.getLong(elementPointerAddresses + offset);
+        lock.readLock().lock();
+        try {
+            throwIfClosed();
+            long offset = findOffset(element, capacity, elementPointerAddresses);
+            long entryPointer = UnsafeUtils.getLong(elementPointerAddresses + offset);
 
-        return entryPointer != 0;
-
+            return entryPointer != 0;
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     /**
@@ -176,25 +189,30 @@ public final class LargeHashSet<E> implements LargeSet<E> {
      */
     @Override
     public boolean add(@NonNull E element) {
-        throwIfClosed();
-        resizeIfRequired();
-        modifications++;
+        lock.writeLock().lock();
+        try {
+            throwIfClosed();
+            resizeIfRequired();
+            modifications++;
 
-        long offset = findOffset(element, capacity, elementPointerAddresses);
-        long elementPointer = UnsafeUtils.getLong(elementPointerAddresses + offset);
-        if (elementPointer != 0) return false;
+            long offset = findOffset(element, capacity, elementPointerAddresses);
+            long elementPointer = UnsafeUtils.getLong(elementPointerAddresses + offset);
+            if (elementPointer != 0) return false;
 
-        size++;
+            size++;
 
-        int elementSize = elementSerializer.sizeInBytes(element);
+            int elementSize = elementSerializer.sizeInBytes(element);
 
-        elementPointer = UnsafeUtils.allocate(headerSize + elementSize);
-        UnsafeUtils.putLong(elementPointerAddresses + offset, elementPointer);
+            elementPointer = UnsafeUtils.allocate(headerSize + elementSize);
+            UnsafeUtils.putLong(elementPointerAddresses + offset, elementPointer);
 
-        if (!fixedSize) UnsafeUtils.putInt(elementPointer, elementSize);
-        elementSerializer.serialize(memoryWriter.resetTo(elementPointer + headerSize, elementSize), element);
+            if (!fixedSize) UnsafeUtils.putInt(elementPointer, elementSize);
+            elementSerializer.serialize(memoryWriter.get().resetTo(elementPointer + headerSize, elementSize), element);
 
-        return true;
+            return true;
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     /**
@@ -205,34 +223,39 @@ public final class LargeHashSet<E> implements LargeSet<E> {
      */
     @Override
     public boolean remove(@NonNull E element) {
-        throwIfClosed();
-        resizeIfRequired();
-        long offset = findOffset(element, capacity, elementPointerAddresses);
-        long elementPointer = UnsafeUtils.getLong(elementPointerAddresses + offset);
+        lock.writeLock().lock();
+        try {
+            throwIfClosed();
+            resizeIfRequired();
+            long offset = findOffset(element, capacity, elementPointerAddresses);
+            long elementPointer = UnsafeUtils.getLong(elementPointerAddresses + offset);
 
-        if (elementPointer == 0) return false;
+            if (elementPointer == 0) return false;
 
-        modifications++;
-        size--;
+            modifications++;
+            size--;
 
-        UnsafeUtils.free(elementPointer);
+            UnsafeUtils.free(elementPointer);
 
-        long index = offset / Long.BYTES;
-        long bubbleUpIndex = index;
-        while (true) {
-            long elementIndex;
-            do {
-                bubbleUpIndex = (bubbleUpIndex + 1) % capacity;
-                elementPointer = UnsafeUtils.getLong(elementPointerAddresses + bubbleUpIndex * Long.BYTES);
-                if (elementPointer == 0) {
-                    UnsafeUtils.putLong(elementPointerAddresses + index * Long.BYTES, 0);
-                    return true;
-                }
-                elementIndex = offset(read(elementPointer), capacity);
-            } while (index <= bubbleUpIndex ? index < elementIndex && elementIndex <= bubbleUpIndex : index < elementIndex || elementIndex <= bubbleUpIndex);
+            long index = offset / Long.BYTES;
+            long bubbleUpIndex = index;
+            while (true) {
+                long elementIndex;
+                do {
+                    bubbleUpIndex = (bubbleUpIndex + 1) % capacity;
+                    elementPointer = UnsafeUtils.getLong(elementPointerAddresses + bubbleUpIndex * Long.BYTES);
+                    if (elementPointer == 0) {
+                        UnsafeUtils.putLong(elementPointerAddresses + index * Long.BYTES, 0);
+                        return true;
+                    }
+                    elementIndex = offset(read(elementPointer), capacity);
+                } while (index <= bubbleUpIndex ? index < elementIndex && elementIndex <= bubbleUpIndex : index < elementIndex || elementIndex <= bubbleUpIndex);
 
-            UnsafeUtils.putLong(elementPointerAddresses + index * Long.BYTES, elementPointer);
-            index = bubbleUpIndex;
+                UnsafeUtils.putLong(elementPointerAddresses + index * Long.BYTES, elementPointer);
+                index = bubbleUpIndex;
+            }
+        } finally {
+            lock.writeLock().unlock();
         }
     }
 
@@ -241,17 +264,22 @@ public final class LargeHashSet<E> implements LargeSet<E> {
      */
     @Override
     public void clear() {
-        throwIfClosed();
-        for (int i = 0; i < capacity; i++) {
-            long elementPointerAddress = elementPointerAddresses + i * Long.BYTES;
-            long elementPointer = UnsafeUtils.getLong(elementPointerAddress);
-            if (elementPointer != 0) {
-                modifications++;
-                UnsafeUtils.free(elementPointer);
-                UnsafeUtils.putLong(elementPointerAddress, 0);
+        lock.writeLock().lock();
+        try {
+            throwIfClosed();
+            for (int i = 0; i < capacity; i++) {
+                long elementPointerAddress = elementPointerAddresses + i * Long.BYTES;
+                long elementPointer = UnsafeUtils.getLong(elementPointerAddress);
+                if (elementPointer != 0) {
+                    modifications++;
+                    UnsafeUtils.free(elementPointer);
+                    UnsafeUtils.putLong(elementPointerAddress, 0);
+                }
             }
+            size = 0;
+        } finally {
+            lock.writeLock().unlock();
         }
-        size = 0;
     }
 
     /**
@@ -427,7 +455,7 @@ public final class LargeHashSet<E> implements LargeSet<E> {
      */
     private E read(long elementPointer) {
         int elementSize = fixedSize ? elementSerializer.sizeInBytes(null) : UnsafeUtils.getInt(elementPointer);
-        MemoryReader reader = memoryReader.resetTo(elementPointer + headerSize, elementSize);
+        MemoryReader reader = memoryReader.get().resetTo(elementPointer + headerSize, elementSize);
 
         return elementSerializer.deserialize(reader);
     }

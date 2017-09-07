@@ -13,6 +13,9 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import static java.lang.ThreadLocal.withInitial;
 
 /**
  * LargeHashMap, an open address hash map that can handle a large number of entries
@@ -35,14 +38,19 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
     private static final int DEFAULT_CAPACITY = 512;
 
     /**
+     * The lock used to guarantee thread safety in map operations
+     */
+    private final ReentrantReadWriteLock lock;
+
+    /**
      * The memory reader passed to key and value serializer, it's reset every time
      */
-    private final UnsafeMemoryReader memoryReader;
+    private final ThreadLocal<UnsafeMemoryReader> memoryReader;
 
     /**
      * The memory writer passed to key and value serializer, it's reset every time
      */
-    private final UnsafeMemoryWriter memoryWriter;
+    private final ThreadLocal<UnsafeMemoryWriter> memoryWriter;
 
     /**
      * The key object serializer
@@ -105,7 +113,6 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
      */
     private boolean closed;
 
-
     /**
      * Factory method for creating a {@link LargeHashMap} object
      *
@@ -165,8 +172,9 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
         boolean keyFixedSize = keySerializer instanceof FixedSizeObjectSerializer;
         boolean valueFixedSize = valueSerializer instanceof FixedSizeObjectSerializer;
         return new LargeHashMap<>(
-                new UnsafeMemoryReader(),
-                new UnsafeMemoryWriter(),
+                new ReentrantReadWriteLock(),
+                withInitial(UnsafeMemoryReader::new),
+                withInitial(UnsafeMemoryWriter::new),
                 keySerializer,
                 keyFixedSize,
                 keyFixedSize ? 0 : Integer.BYTES,
@@ -190,11 +198,16 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
      */
     @Override
     public V get(@NonNull K key) {
-        throwIfClosed();
-        long offset = findOffset(key, capacity, entryPointerAddresses);
-        long entryPointer = UnsafeUtils.getLong(entryPointerAddresses + offset);
+        lock.readLock().lock();
+        try {
+            throwIfClosed();
+            long offset = findOffset(key, capacity, entryPointerAddresses);
+            long entryPointer = UnsafeUtils.getLong(entryPointerAddresses + offset);
 
-        return entryPointer != 0 ? readValue(entryPointer) : null;
+            return entryPointer != 0 ? readValue(entryPointer) : null;
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     /**
@@ -206,34 +219,39 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
      */
     @Override
     public V put(@NonNull K key, @NonNull V value) {
-        throwIfClosed();
-        resizeIfRequired();
-        modifications++;
+        lock.writeLock().lock();
+        try {
+            throwIfClosed();
+            resizeIfRequired();
+            modifications++;
 
-        long offset = findOffset(key, capacity, entryPointerAddresses);
-        long entryPointer = UnsafeUtils.getLong(entryPointerAddresses + offset);
-        V previous = null;
+            long offset = findOffset(key, capacity, entryPointerAddresses);
+            long entryPointer = UnsafeUtils.getLong(entryPointerAddresses + offset);
+            V previous = null;
 
-        if (entryPointer != 0) {
-            previous = readValue(entryPointer);
-            UnsafeUtils.free(entryPointer);
-        } else {
-            size++;
+            if (entryPointer != 0) {
+                previous = readValue(entryPointer);
+                UnsafeUtils.free(entryPointer);
+            } else {
+                size++;
+            }
+
+            int keySize = keySerializer.sizeInBytes(key);
+            int valueSize = valueSerializer.sizeInBytes(value);
+
+            entryPointer = UnsafeUtils.allocate(keyHeaderSize + keySize + valueHeaderSize + valueSize);
+            UnsafeUtils.putLong(entryPointerAddresses + offset, entryPointer);
+
+            if (!keyFixedSize) UnsafeUtils.putInt(entryPointer, keySize);
+            keySerializer.serialize(memoryWriter.get().resetTo(entryPointer + keyHeaderSize, keySize), key);
+
+            if (!valueFixedSize) UnsafeUtils.putInt(entryPointer + keyHeaderSize + keySize, valueSize);
+            valueSerializer.serialize(memoryWriter.get().resetTo(entryPointer + keyHeaderSize + keySize + valueHeaderSize, valueSize), value);
+
+            return previous;
+        } finally {
+            lock.writeLock().unlock();
         }
-
-        int keySize = keySerializer.sizeInBytes(key);
-        int valueSize = valueSerializer.sizeInBytes(value);
-
-        entryPointer = UnsafeUtils.allocate(keyHeaderSize + keySize + valueHeaderSize + valueSize);
-        UnsafeUtils.putLong(entryPointerAddresses + offset, entryPointer);
-
-        if (!keyFixedSize) UnsafeUtils.putInt(entryPointer, keySize);
-        keySerializer.serialize(memoryWriter.resetTo(entryPointer + keyHeaderSize, keySize), key);
-
-        if (!valueFixedSize) UnsafeUtils.putInt(entryPointer + keyHeaderSize + keySize, valueSize);
-        valueSerializer.serialize(memoryWriter.resetTo(entryPointer + keyHeaderSize + keySize + valueHeaderSize, valueSize), value);
-
-        return previous;
     }
 
     /**
@@ -244,35 +262,40 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
      */
     @Override
     public V remove(@NonNull K key) {
-        throwIfClosed();
-        resizeIfRequired();
-        long offset = findOffset(key, capacity, entryPointerAddresses);
-        long entryPointer = UnsafeUtils.getLong(entryPointerAddresses + offset);
+        lock.writeLock().lock();
+        try {
+            throwIfClosed();
+            resizeIfRequired();
+            long offset = findOffset(key, capacity, entryPointerAddresses);
+            long entryPointer = UnsafeUtils.getLong(entryPointerAddresses + offset);
 
-        if (entryPointer == 0) return null;
+            if (entryPointer == 0) return null;
 
-        modifications++;
-        size--;
+            modifications++;
+            size--;
 
-        V value = readValue(entryPointer);
-        UnsafeUtils.free(entryPointer);
+            V value = readValue(entryPointer);
+            UnsafeUtils.free(entryPointer);
 
-        long index = offset / Long.BYTES;
-        long bubbleUpIndex = index;
-        while (true) {
-            long entryIndex;
-            do {
-                bubbleUpIndex = (bubbleUpIndex + 1) % capacity;
-                entryPointer = UnsafeUtils.getLong(entryPointerAddresses + bubbleUpIndex * Long.BYTES);
-                if (entryPointer == 0) {
-                    UnsafeUtils.putLong(entryPointerAddresses + index * Long.BYTES, 0);
-                    return value;
-                }
-                entryIndex = offset(readKey(entryPointer), capacity);
-            } while (index <= bubbleUpIndex ? index < entryIndex && entryIndex <= bubbleUpIndex : index < entryIndex || entryIndex <= bubbleUpIndex);
+            long index = offset / Long.BYTES;
+            long bubbleUpIndex = index;
+            while (true) {
+                long entryIndex;
+                do {
+                    bubbleUpIndex = (bubbleUpIndex + 1) % capacity;
+                    entryPointer = UnsafeUtils.getLong(entryPointerAddresses + bubbleUpIndex * Long.BYTES);
+                    if (entryPointer == 0) {
+                        UnsafeUtils.putLong(entryPointerAddresses + index * Long.BYTES, 0);
+                        return value;
+                    }
+                    entryIndex = offset(readKey(entryPointer), capacity);
+                } while (index <= bubbleUpIndex ? index < entryIndex && entryIndex <= bubbleUpIndex : index < entryIndex || entryIndex <= bubbleUpIndex);
 
-            UnsafeUtils.putLong(entryPointerAddresses + index * Long.BYTES, entryPointer);
-            index = bubbleUpIndex;
+                UnsafeUtils.putLong(entryPointerAddresses + index * Long.BYTES, entryPointer);
+                index = bubbleUpIndex;
+            }
+        } finally {
+            lock.writeLock().unlock();
         }
     }
 
@@ -281,17 +304,22 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
      */
     @Override
     public void clear() {
-        throwIfClosed();
-        for (int i = 0; i < capacity; i++) {
-            long entryPointerAddress = entryPointerAddresses + i * Long.BYTES;
-            long entryPointer = UnsafeUtils.getLong(entryPointerAddress);
-            if (entryPointer != 0) {
-                modifications++;
-                UnsafeUtils.free(entryPointer);
-                UnsafeUtils.putLong(entryPointerAddress, 0);
+        lock.writeLock().lock();
+        try {
+            throwIfClosed();
+            for (int i = 0; i < capacity; i++) {
+                long entryPointerAddress = entryPointerAddresses + i * Long.BYTES;
+                long entryPointer = UnsafeUtils.getLong(entryPointerAddress);
+                if (entryPointer != 0) {
+                    modifications++;
+                    UnsafeUtils.free(entryPointer);
+                    UnsafeUtils.putLong(entryPointerAddress, 0);
+                }
             }
+            size = 0;
+        } finally {
+            lock.writeLock().unlock();
         }
-        size = 0;
     }
 
     /**
@@ -468,7 +496,7 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
      */
     private K readKey(long entryPointer) {
         int keySize = keyFixedSize ? keySerializer.sizeInBytes(null) : UnsafeUtils.getInt(entryPointer);
-        MemoryReader reader = memoryReader.resetTo(entryPointer + keyHeaderSize, keySize);
+        MemoryReader reader = memoryReader.get().resetTo(entryPointer + keyHeaderSize, keySize);
 
         return keySerializer.deserialize(reader);
     }
@@ -483,7 +511,7 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
         int keySize = keyFixedSize ? keySerializer.sizeInBytes(null) : UnsafeUtils.getInt(entryPointer);
         long valuePointer = entryPointer + keyHeaderSize + keySize;
         int valueSize = valueFixedSize ? valueSerializer.sizeInBytes(null) : UnsafeUtils.getInt(valuePointer);
-        MemoryReader reader = memoryReader.resetTo(valuePointer + valueHeaderSize, valueSize);
+        MemoryReader reader = memoryReader.get().resetTo(valuePointer + valueHeaderSize, valueSize);
 
         return valueSerializer.deserialize(reader);
     }
