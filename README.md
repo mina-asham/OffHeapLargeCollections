@@ -1,6 +1,8 @@
 # Off Heap Large Collections [![Build Status](https://travis-ci.org/mina-asham/OffHeapLargeCollections.svg?branch=master)](https://travis-ci.org/mina-asham/OffHeapLargeCollections) [![codecov](https://codecov.io/gh/mina-asham/OffHeapLargeCollections/branch/master/graph/badge.svg)](https://codecov.io/gh/mina-asham/OffHeapLargeCollections)
 Off heap large collections is a group of collections that are stored directly off heap, this is suitable for very large data structures that might not work with regular situations due to GC.
 
+Also, as a big advantage off heap large collections (so far) ***has no dependencies at all***, that means it's super light-weight and would nott cause an compatibility issues with other packages.
+
 The goal of this project is to support varied collections similar to the JDK default collections.
 
 Currently supported collections:
