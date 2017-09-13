@@ -1,22 +1,24 @@
 package com.github.minaasham.offheap.largecollections.serialization.common;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.stream.IntStream;
 
-import static com.github.minaasham.offheap.largecollections.serialization.SerializationTestUtils.*;
+import static com.github.minaasham.offheap.largecollections.serialization.SerializationTestUtils.randomInt;
+import static com.github.minaasham.offheap.largecollections.serialization.SerializationTestUtils.randomString;
+import static com.github.minaasham.offheap.largecollections.serialization.SerializationTestUtils.testRoundtrip;
 
-public class ArraySerializerTest {
+class ArraySerializerTest {
 
     @Test
-    public void testStringArray() {
+    void testStringArray() {
         String[] strings = IntStream.range(0, 1000).mapToObj(ignored -> randomString()).toArray(String[]::new);
 
         testRoundtrip(strings, () -> new ArraySerializer<>(new StringSerializer(), String.class));
     }
 
     @Test
-    public void testIntArray() {
+    void testIntArray() {
         Integer[] integers = IntStream.range(0, 1000).mapToObj(ignored -> randomInt()).toArray(Integer[]::new);
 
         testRoundtrip(integers, () -> new ArraySerializer<>(new IntSerializer(), Integer.class));

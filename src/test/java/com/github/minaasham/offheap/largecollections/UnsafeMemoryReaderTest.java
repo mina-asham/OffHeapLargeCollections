@@ -1,51 +1,53 @@
 package com.github.minaasham.offheap.largecollections;
 
 import com.github.minaasham.offheap.largecollections.serialization.MemoryReader;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.function.Function;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class UnsafeMemoryReaderTest {
+
+class UnsafeMemoryReaderTest {
 
     @Test
-    public void readByte() {
+    void readByte() {
         simpleRead(Byte.BYTES, MemoryReader::readByte, (byte) 0);
     }
 
     @Test
-    public void readShort() {
+    void readShort() {
         simpleRead(Short.BYTES, MemoryReader::readShort, (short) 0);
     }
 
     @Test
-    public void readChar() {
+    void readChar() {
         simpleRead(Character.BYTES, MemoryReader::readChar, (char) 0);
     }
 
     @Test
-    public void readInt() {
+    void readInt() {
         simpleRead(Integer.BYTES, MemoryReader::readInt, 0);
     }
 
     @Test
-    public void readLong() {
+    void readLong() {
         simpleRead(Long.BYTES, MemoryReader::readLong, 0L);
     }
 
     @Test
-    public void readFloat() {
+    void readFloat() {
         simpleRead(Float.BYTES, MemoryReader::readFloat, (float) 0);
     }
 
     @Test
-    public void readDouble() {
+    void readDouble() {
         simpleRead(Double.BYTES, MemoryReader::readDouble, 0.0);
     }
 
     @Test
-    public void readComplex() {
+    void readComplex() {
         int bytes = Long.BYTES + Integer.BYTES + Character.BYTES;
         long address = UnsafeUtils.allocate(bytes);
 
@@ -57,9 +59,9 @@ public class UnsafeMemoryReaderTest {
         UnsafeUtils.free(address);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void readFails() {
-        simpleRead(Byte.BYTES, MemoryReader::readInt, 0);
+    @Test
+    void readFails() {
+        assertThrows(IllegalStateException.class, () -> simpleRead(Byte.BYTES, MemoryReader::readInt, 0));
     }
 
     private static <T> void simpleRead(long bytes, Function<MemoryReader, T> readerFunction, T expected) {

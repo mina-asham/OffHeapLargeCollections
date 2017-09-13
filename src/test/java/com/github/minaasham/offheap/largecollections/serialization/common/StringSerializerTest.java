@@ -1,16 +1,16 @@
 package com.github.minaasham.offheap.largecollections.serialization.common;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.github.minaasham.offheap.largecollections.serialization.SerializationTestUtils.randomString;
 import static com.github.minaasham.offheap.largecollections.serialization.SerializationTestUtils.testRoundtrip;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class StringSerializerTest {
+class StringSerializerTest {
 
     @Test
-    public void test() {
+    void test() {
         for (int i = 0; i < 100; i++) {
             testRoundtrip(randomString(), StringSerializer::new);
         }

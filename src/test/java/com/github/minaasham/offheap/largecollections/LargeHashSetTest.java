@@ -2,8 +2,8 @@ package com.github.minaasham.offheap.largecollections;
 
 import com.github.minaasham.offheap.largecollections.serialization.common.IntSerializer;
 import com.github.minaasham.offheap.largecollections.serialization.common.StringSerializer;
-import org.junit.AfterClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.ConcurrentModificationException;
 import java.util.HashSet;
@@ -17,80 +17,83 @@ import static com.github.minaasham.offheap.largecollections.serialization.Serial
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toList;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LargeHashSetTest {
+class LargeHashSetTest {
 
     private static final StringSerializer STRING_SERIALIZER = new StringSerializer();
     private static final LargeSet<String> EMPTY_SET = LargeHashSet.of(STRING_SERIALIZER, 1);
 
-    @AfterClass
-    public static void tearDown() {
+    @AfterAll
+    static void tearDownAll() {
         EMPTY_SET.close();
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testThrowsIfNullElementSerializer() {
-        LargeHashSet.of(null).close();
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testThrowsIfNegativeCapacity() {
-        LargeHashSet.of(STRING_SERIALIZER, -1).close();
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testThrowsIfZeroCapacity() {
-        LargeHashSet.of(STRING_SERIALIZER, 0).close();
+    @Test
+    void testThrowsIfNullElementSerializer() {
+        assertThrows(NullPointerException.class, () -> LargeHashSet.of(null).close());
     }
 
     @Test
-    public void testSucceedsCapacity() {
+    void testThrowsIfNegativeCapacity() {
+        assertThrows(IllegalArgumentException.class, () -> LargeHashSet.of(STRING_SERIALIZER, -1).close());
+    }
+
+    @Test
+    void testThrowsIfZeroCapacity() {
+        assertThrows(IllegalArgumentException.class, () -> LargeHashSet.of(STRING_SERIALIZER, 0).close());
+    }
+
+    @Test
+    void testSucceedsCapacity() {
         LargeHashSet.of(STRING_SERIALIZER, 3).close();
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testThrowsIfNegativeLoadFactor() {
-        LargeHashSet.of(STRING_SERIALIZER, -1.0).close();
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testThrowsIfZeroLoadFactor() {
-        LargeHashSet.of(STRING_SERIALIZER, 0.0).close();
+    @Test
+    void testThrowsIfNegativeLoadFactor() {
+        assertThrows(IllegalArgumentException.class, () -> LargeHashSet.of(STRING_SERIALIZER, -1.0).close());
     }
 
     @Test
-    public void testSucceedsLoadFactor() {
+    void testThrowsIfZeroLoadFactor() {
+        assertThrows(IllegalArgumentException.class, () -> LargeHashSet.of(STRING_SERIALIZER, 0.0).close());
+    }
+
+    @Test
+    void testSucceedsLoadFactor() {
         LargeHashSet.of(STRING_SERIALIZER, 0.5).close();
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testThrowsIfOneLoadFactor() {
-        LargeHashSet.of(STRING_SERIALIZER, 1.0).close();
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testThrowsIfMoreThanOneLoadFactor() {
-        LargeHashSet.of(STRING_SERIALIZER, 1.1).close();
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testThrowsIfNullElementInContains() {
-        EMPTY_SET.contains(null);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testThrowsIfNullElementInAdd() {
-        EMPTY_SET.add(null);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testThrowsIfNullElementInRemove() {
-        EMPTY_SET.remove(null);
+    @Test
+    void testThrowsIfOneLoadFactor() {
+        assertThrows(IllegalArgumentException.class, () -> LargeHashSet.of(STRING_SERIALIZER, 1.0).close());
     }
 
     @Test
-    public void testContains() {
+    void testThrowsIfMoreThanOneLoadFactor() {
+        assertThrows(IllegalArgumentException.class, () -> LargeHashSet.of(STRING_SERIALIZER, 1.1).close());
+    }
+
+    @Test
+    void testThrowsIfNullElementInContains() {
+        assertThrows(NullPointerException.class, () -> EMPTY_SET.contains(null));
+    }
+
+    @Test
+    void testThrowsIfNullElementInAdd() {
+        assertThrows(NullPointerException.class, () -> EMPTY_SET.add(null));
+    }
+
+    @Test
+    void testThrowsIfNullElementInRemove() {
+        assertThrows(NullPointerException.class, () -> EMPTY_SET.remove(null));
+    }
+
+    @Test
+    void testContains() {
         try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set.add("element1");
             set.add("element2");
@@ -101,7 +104,7 @@ public class LargeHashSetTest {
     }
 
     @Test
-    public void testAdd() {
+    void testAdd() {
         try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             assertTrue(set.add("element1"));
             assertTrue(set.add("element2"));
@@ -112,7 +115,7 @@ public class LargeHashSetTest {
     }
 
     @Test
-    public void testRemove() {
+    void testRemove() {
         try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set.add("element1");
             set.add("element2");
@@ -123,7 +126,7 @@ public class LargeHashSetTest {
     }
 
     @Test
-    public void testRemoveAll() {
+    void testRemoveAll() {
         try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             List<String> randomValues = IntStream.range(0, 10000).mapToObj(ignored -> randomString()).collect(toList());
 
@@ -135,7 +138,7 @@ public class LargeHashSetTest {
     }
 
     @Test
-    public void testClear() {
+    void testClear() {
         try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set.add("element1");
             set.add("element2");
@@ -148,7 +151,7 @@ public class LargeHashSetTest {
     }
 
     @Test
-    public void testSize() {
+    void testSize() {
         try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set.add("element1");
             set.add("element2");
@@ -158,7 +161,7 @@ public class LargeHashSetTest {
     }
 
     @Test
-    public void testIterator() {
+    void testIterator() {
         try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set.add("element1");
             set.add("element2");
@@ -172,8 +175,8 @@ public class LargeHashSetTest {
         }
     }
 
-    @Test(expected = NoSuchElementException.class)
-    public void testIteratorThrowsIfNoNext() {
+    @Test
+    void testIteratorThrowsIfNoNext() {
         try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set.add("element1");
             set.add("element2");
@@ -184,12 +187,12 @@ public class LargeHashSetTest {
             assertTrue(iterator.hasNext());
             iterator.next();
             assertFalse(iterator.hasNext());
-            iterator.next();
+            assertThrows(NoSuchElementException.class, iterator::next);
         }
     }
 
-    @Test(expected = ConcurrentModificationException.class)
-    public void testIteratorThrowsIfSetChanges() {
+    @Test
+    void testIteratorThrowsIfSetChanges() {
         try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set.add("element1");
 
@@ -197,61 +200,61 @@ public class LargeHashSetTest {
 
             set.add("element2");
 
-            iterator.next();
+            assertThrows(ConcurrentModificationException.class, iterator::next);
         }
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testThrowsIfClosedWithContains() {
+    @Test
+    void testThrowsIfClosedWithContains() {
         LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
         set.close();
-        set.contains("");
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void testThrowsIfClosedWithAdd() {
-        LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
-        set.close();
-        set.add("");
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void testThrowsIfClosedWithRemove() {
-        LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
-        set.close();
-        set.remove("");
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void testThrowsIfClosedWithClear() {
-        LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
-        set.close();
-        set.clear();
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void testThrowsIfClosedWithSize() {
-        LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
-        set.close();
-        set.size();
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void testThrowsIfClosedWithIterator() {
-        LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
-        set.close();
-        set.iterator();
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void testThrowsIfClosedWithClose() {
-        LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
-        set.close();
-        set.close();
+        assertThrows(IllegalStateException.class, () -> set.contains(""));
     }
 
     @Test
-    public void testHashCode() {
+    void testThrowsIfClosedWithAdd() {
+        LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
+        set.close();
+        assertThrows(IllegalStateException.class, () -> set.add(""));
+    }
+
+    @Test
+    void testThrowsIfClosedWithRemove() {
+        LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
+        set.close();
+        assertThrows(IllegalStateException.class, () -> set.remove(""));
+    }
+
+    @Test
+    void testThrowsIfClosedWithClear() {
+        LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
+        set.close();
+        assertThrows(IllegalStateException.class, set::clear);
+    }
+
+    @Test
+    void testThrowsIfClosedWithSize() {
+        LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
+        set.close();
+        assertThrows(IllegalStateException.class, set::size);
+    }
+
+    @Test
+    void testThrowsIfClosedWithIterator() {
+        LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
+        set.close();
+        assertThrows(IllegalStateException.class, set::iterator);
+    }
+
+    @Test
+    void testThrowsIfClosedWithClose() {
+        LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5);
+        set.close();
+        assertThrows(IllegalStateException.class, set::close);
+    }
+
+    @Test
+    void testHashCode() {
         try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set.add("element1");
             set.add("element2");
@@ -263,7 +266,7 @@ public class LargeHashSetTest {
 
     @SuppressWarnings("EqualsWithItself")
     @Test
-    public void testEqualsSameObject() {
+    void testEqualsSameObject() {
         try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             assertTrue(set.equals(set));
         }
@@ -271,7 +274,7 @@ public class LargeHashSetTest {
 
     @SuppressWarnings("ObjectEqualsNull")
     @Test
-    public void testEqualsNull() {
+    void testEqualsNull() {
         try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             assertFalse(set.equals(null));
         }
@@ -279,14 +282,14 @@ public class LargeHashSetTest {
 
     @SuppressWarnings("EqualsBetweenInconvertibleTypes")
     @Test
-    public void testEqualsWrongType() {
+    void testEqualsWrongType() {
         try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             assertFalse(set.equals(1));
         }
     }
 
     @Test
-    public void testEqualsSizeMismatch() {
+    void testEqualsSizeMismatch() {
         try (LargeSet<String> set1 = LargeHashSet.of(STRING_SERIALIZER, 5);
              LargeSet<String> set2 = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set1.add("element1");
@@ -299,7 +302,7 @@ public class LargeHashSetTest {
     }
 
     @Test
-    public void testEqualsCloseMismatch() {
+    void testEqualsCloseMismatch() {
         try (LargeSet<String> set1 = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             LargeSet<String> set2 = LargeHashSet.of(STRING_SERIALIZER, 5);
             set2.close();
@@ -309,7 +312,7 @@ public class LargeHashSetTest {
     }
 
     @Test
-    public void testEqualsNotEqual() {
+    void testEqualsNotEqual() {
         try (LargeSet<String> set1 = LargeHashSet.of(STRING_SERIALIZER, 5);
              LargeSet<String> set2 = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set1.add("element1");
@@ -320,7 +323,7 @@ public class LargeHashSetTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         try (LargeSet<String> set1 = LargeHashSet.of(STRING_SERIALIZER, 5);
              LargeSet<String> set2 = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set1.add("element1");
@@ -334,7 +337,7 @@ public class LargeHashSetTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             set.add("element1");
             set.add("element2");
@@ -353,7 +356,7 @@ public class LargeHashSetTest {
     }
 
     @Test
-    public void testFixedSize() {
+    void testFixedSize() {
         try (LargeSet<Integer> set = LargeHashSet.of(new IntSerializer())) {
             assertTrue(set.add(1));
             assertTrue(set.add(2));
@@ -368,7 +371,7 @@ public class LargeHashSetTest {
     }
 
     @Test
-    public void testBadHashAndHighLoad() {
+    void testBadHashAndHighLoad() {
         try (LargeSet<BadHashInteger> set = LargeHashSet.of(new BadHashIntegerSerializer(), 0.99, 1020)) {
             int limit = 1000;
 
@@ -393,7 +396,7 @@ public class LargeHashSetTest {
     }
 
     @Test
-    public void testStress() {
+    void testStress() {
         try (LargeSet<String> set = LargeHashSet.of(STRING_SERIALIZER, 5)) {
             Set<String> expectedSet = new HashSet<>();
 

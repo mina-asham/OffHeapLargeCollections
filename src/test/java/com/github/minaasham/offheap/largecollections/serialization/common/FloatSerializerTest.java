@@ -1,13 +1,13 @@
 package com.github.minaasham.offheap.largecollections.serialization.common;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.github.minaasham.offheap.largecollections.serialization.SerializationTestUtils.testRoundtrip;
 
-public class FloatSerializerTest {
+class FloatSerializerTest {
 
     @Test
-    public void test() {
+    void test() {
         testRoundtrip(Float.MIN_VALUE, FloatSerializer::new);
         testRoundtrip(-1.0f, FloatSerializer::new);
         testRoundtrip(0.0f, FloatSerializer::new);

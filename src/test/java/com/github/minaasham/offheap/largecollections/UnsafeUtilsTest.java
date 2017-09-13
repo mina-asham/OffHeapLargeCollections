@@ -3,23 +3,20 @@ package com.github.minaasham.offheap.largecollections;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mockit.Mock;
 import mockit.MockUp;
-import mockit.integration.junit4.JMockit;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import sun.misc.Unsafe;
 
 import java.util.Random;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(JMockit.class)
-public class UnsafeUtilsTest {
+class UnsafeUtilsTest {
 
     private static final Random RANDOM = new Random();
     private static final double DELTA = 1e-10;
 
     @Test
-    public void testAllocate() {
+    void testAllocate() {
         long expectedAddress = 123;
         long expectedBytes = 456;
         new MockUp<Unsafe>() {
@@ -45,7 +42,7 @@ public class UnsafeUtilsTest {
 
 
     @Test
-    public void testFree() {
+    void testFree() {
         long expectedAddress = 123;
         new MockUp<Unsafe>() {
 
@@ -60,7 +57,7 @@ public class UnsafeUtilsTest {
     }
 
     @Test
-    public void testByte() {
+    void testByte() {
         long address = UnsafeUtils.allocate(Byte.BYTES);
         byte value = (byte) RANDOM.nextInt();
         UnsafeUtils.putByte(address, value);
@@ -69,7 +66,7 @@ public class UnsafeUtilsTest {
     }
 
     @Test
-    public void testShort() {
+    void testShort() {
         long address = UnsafeUtils.allocate(Short.BYTES);
         short value = (short) RANDOM.nextInt();
         UnsafeUtils.putShort(address, value);
@@ -78,7 +75,7 @@ public class UnsafeUtilsTest {
     }
 
     @Test
-    public void testChar() {
+    void testChar() {
         long address = UnsafeUtils.allocate(Character.BYTES);
         char value = (char) RANDOM.nextInt();
         UnsafeUtils.putChar(address, value);
@@ -87,7 +84,7 @@ public class UnsafeUtilsTest {
     }
 
     @Test
-    public void testInt() {
+    void testInt() {
         long address = UnsafeUtils.allocate(Integer.BYTES);
         int value = RANDOM.nextInt();
         UnsafeUtils.putInt(address, value);
@@ -96,7 +93,7 @@ public class UnsafeUtilsTest {
     }
 
     @Test
-    public void testLong() {
+    void testLong() {
         long address = UnsafeUtils.allocate(Long.BYTES);
         long value = RANDOM.nextLong();
         UnsafeUtils.putLong(address, value);
@@ -105,7 +102,7 @@ public class UnsafeUtilsTest {
     }
 
     @Test
-    public void testFloat() {
+    void testFloat() {
         long address = UnsafeUtils.allocate(Float.BYTES);
         float value = RANDOM.nextFloat();
         UnsafeUtils.putFloat(address, value);
@@ -114,7 +111,7 @@ public class UnsafeUtilsTest {
     }
 
     @Test
-    public void testDouble() {
+    void testDouble() {
         long address = UnsafeUtils.allocate(Double.BYTES);
         double value = RANDOM.nextDouble();
         UnsafeUtils.putDouble(address, value);
