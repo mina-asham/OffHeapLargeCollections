@@ -23,7 +23,7 @@ IntSerializer intSerializer = new IntSerializer();
 LargeMap<String, Integer> nameToAge = LargeHashMap.of(stringSerializer, intSerializer);
 try (Stream<String> lines = Files.lines(Paths.get("nameToAge.csv"))) {
     lines.map(line -> line.split(","))
-            .forEach(parts -> nameToAge.put(parts[0], Integer.parseInt(parts[1])));
+         .forEach(parts -> nameToAge.put(parts[0], Integer.parseInt(parts[1])));
 }
 
 // Do lookups with map, possibly load it as a server side cache
