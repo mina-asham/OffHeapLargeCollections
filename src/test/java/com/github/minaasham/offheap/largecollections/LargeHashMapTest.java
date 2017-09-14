@@ -327,11 +327,22 @@ class LargeHashMapTest {
     }
 
     @Test
-    void testEqualsNotEqual() {
+    void testEqualsNotEqualKeyDoesntExist() {
         try (LargeMap<String, String> map1 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
              LargeMap<String, String> map2 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
             map1.put("key1", "value1");
             map2.put("key2", "value2");
+
+            assertFalse(map1.equals(map2));
+        }
+    }
+
+    @Test
+    void testEqualsNotEqualValueDoesntMatch() {
+        try (LargeMap<String, String> map1 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5);
+             LargeMap<String, String> map2 = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 5)) {
+            map1.put("key1", "value1");
+            map2.put("key1", "value2");
 
             assertFalse(map1.equals(map2));
         }
