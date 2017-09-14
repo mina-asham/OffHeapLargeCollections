@@ -345,8 +345,13 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
      */
     @Override
     public Iterator<Entry<K, V>> iterator() {
-        throwIfClosed();
-        return new LargeHashMapIterator<>(this, modifications);
+        lock.readLock().lock();
+        try {
+            throwIfClosed();
+            return new LargeHashMapIterator<>(this, modifications);
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     /**
@@ -610,8 +615,13 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
          */
         @Override
         public boolean hasNext() {
-            if (expectedModifications == map.modifications) {
-                return read < map.size;
+            map.lock.readLock().lock();
+            try {
+                if (expectedModifications == map.modifications) {
+                    return read < map.size;
+                }
+            } finally {
+                map.lock.readLock().unlock();
             }
 
             throw new ConcurrentModificationException("Map has been modified since iterator was created");
@@ -626,16 +636,21 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
         @Override
         public Entry<K, V> next() {
             if (hasNext()) {
-                long entryPointer = UnsafeUtils.getLong(map.entryPointerAddresses + offset);
-                offset += Long.BYTES;
-
-                while (entryPointer == 0) {
-                    entryPointer = UnsafeUtils.getLong(map.entryPointerAddresses + offset);
+                map.lock.readLock().lock();
+                try {
+                    long entryPointer = UnsafeUtils.getLong(map.entryPointerAddresses + offset);
                     offset += Long.BYTES;
-                }
 
-                read++;
-                return map.readEntry(entryPointer);
+                    while (entryPointer == 0) {
+                        entryPointer = UnsafeUtils.getLong(map.entryPointerAddresses + offset);
+                        offset += Long.BYTES;
+                    }
+
+                    read++;
+                    return map.readEntry(entryPointer);
+                } finally {
+                    map.lock.readLock().unlock();
+                }
             } else {
                 throw new NoSuchElementException("Iterator exhausted, please use hasNext() to for available items first");
             }

@@ -305,8 +305,13 @@ public final class LargeHashSet<E> implements LargeSet<E> {
      */
     @Override
     public Iterator<E> iterator() {
-        throwIfClosed();
-        return new LargeHashSetIterator<>(this, modifications);
+        lock.readLock().lock();
+        try {
+            throwIfClosed();
+            return new LargeHashSetIterator<>(this, modifications);
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     /**
@@ -543,8 +548,13 @@ public final class LargeHashSet<E> implements LargeSet<E> {
          */
         @Override
         public boolean hasNext() {
-            if (expectedModifications == set.modifications) {
-                return read < set.size;
+            set.lock.readLock().lock();
+            try {
+                if (expectedModifications == set.modifications) {
+                    return read < set.size;
+                }
+            } finally {
+                set.lock.readLock().unlock();
             }
 
             throw new ConcurrentModificationException("Set has been modified since iterator was created");
@@ -559,16 +569,21 @@ public final class LargeHashSet<E> implements LargeSet<E> {
         @Override
         public E next() {
             if (hasNext()) {
-                long elementPointer = UnsafeUtils.getLong(set.elementPointerAddresses + offset);
-                offset += Long.BYTES;
-
-                while (elementPointer == 0) {
-                    elementPointer = UnsafeUtils.getLong(set.elementPointerAddresses + offset);
+                set.lock.readLock().lock();
+                try {
+                    long elementPointer = UnsafeUtils.getLong(set.elementPointerAddresses + offset);
                     offset += Long.BYTES;
-                }
 
-                read++;
-                return set.read(elementPointer);
+                    while (elementPointer == 0) {
+                        elementPointer = UnsafeUtils.getLong(set.elementPointerAddresses + offset);
+                        offset += Long.BYTES;
+                    }
+
+                    read++;
+                    return set.read(elementPointer);
+                } finally {
+                    set.lock.readLock().unlock();
+                }
             } else {
                 throw new NoSuchElementException("Iterator exhausted, please use hasNext() to for available items first");
             }
