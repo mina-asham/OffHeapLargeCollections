@@ -329,8 +329,13 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
      */
     @Override
     public long size() {
-        throwIfClosed();
-        return size;
+        lock.readLock().lock();
+        try {
+            throwIfClosed();
+            return size;
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     /**

@@ -289,8 +289,13 @@ public final class LargeHashSet<E> implements LargeSet<E> {
      */
     @Override
     public long size() {
-        throwIfClosed();
-        return size;
+        lock.readLock().lock();
+        try {
+            throwIfClosed();
+            return size;
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     /**
