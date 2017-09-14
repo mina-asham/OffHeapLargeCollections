@@ -349,10 +349,15 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
      */
     @Override
     public void close() {
-        throwIfClosed();
-        clear();
-        closed = true;
-        UnsafeUtils.free(entryPointerAddresses);
+        lock.writeLock().lock();
+        try {
+            throwIfClosed();
+            clear();
+            closed = true;
+            UnsafeUtils.free(entryPointerAddresses);
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     /**

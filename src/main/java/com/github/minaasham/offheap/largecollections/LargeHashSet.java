@@ -309,10 +309,15 @@ public final class LargeHashSet<E> implements LargeSet<E> {
      */
     @Override
     public void close() {
-        throwIfClosed();
-        clear();
-        closed = true;
-        UnsafeUtils.free(elementPointerAddresses);
+        lock.writeLock().lock();
+        try {
+            throwIfClosed();
+            clear();
+            closed = true;
+            UnsafeUtils.free(elementPointerAddresses);
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     /**
