@@ -1,6 +1,8 @@
 package com.github.minaasham.offheap.largecollections;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import mockit.Mock;
 import mockit.MockUp;
 import org.junit.jupiter.api.Test;
@@ -9,6 +11,8 @@ import sun.misc.Unsafe;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UnsafeUtilsTest {
 
@@ -19,41 +23,26 @@ class UnsafeUtilsTest {
     void testAllocate() {
         long expectedAddress = 123;
         long expectedBytes = 456;
-        new MockUp<Unsafe>() {
 
-            @SuppressFBWarnings("UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS")
-            @Mock
-            long allocateMemory(long bytes) {
-                assertEquals(expectedBytes, bytes);
-                return expectedAddress;
-            }
-
-            @SuppressFBWarnings("UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS")
-            @Mock
-            void setMemory(long address, long bytes, byte value) {
-                assertEquals(expectedAddress, address);
-                assertEquals(expectedBytes, bytes);
-                assertEquals(0, value);
-            }
-        };
+        UnsafeMockUp unsafeMockUp = new UnsafeMockUp(expectedAddress, expectedBytes);
 
         assertEquals(expectedAddress, UnsafeUtils.allocate(expectedBytes));
+        assertTrue(unsafeMockUp.allocateMemoryCalled);
+        assertTrue(unsafeMockUp.setMemoryCalled);
+        assertFalse(unsafeMockUp.freeMemoryCalled);
     }
 
 
     @Test
     void testFree() {
         long expectedAddress = 123;
-        new MockUp<Unsafe>() {
 
-            @SuppressFBWarnings("UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS")
-            @Mock
-            void freeMemory(long address) {
-                assertEquals(expectedAddress, address);
-            }
-        };
+        UnsafeMockUp unsafeMockUp = new UnsafeMockUp(expectedAddress, -1);
 
         UnsafeUtils.free(expectedAddress);
+        assertFalse(unsafeMockUp.allocateMemoryCalled);
+        assertFalse(unsafeMockUp.setMemoryCalled);
+        assertTrue(unsafeMockUp.freeMemoryCalled);
     }
 
     @Test
@@ -117,5 +106,40 @@ class UnsafeUtilsTest {
         UnsafeUtils.putDouble(address, value);
         assertEquals(value, UnsafeUtils.getDouble(address), DELTA);
         UnsafeUtils.free(address);
+    }
+
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    private static class UnsafeMockUp extends MockUp<Unsafe> {
+
+        private final long expectedAddress;
+        private final long expectedBytes;
+
+        private boolean allocateMemoryCalled;
+        private boolean setMemoryCalled;
+        private boolean freeMemoryCalled;
+
+        @SuppressFBWarnings("UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS")
+        @Mock
+        long allocateMemory(long bytes) {
+            allocateMemoryCalled = true;
+            assertEquals(expectedBytes, bytes);
+            return expectedAddress;
+        }
+
+        @SuppressFBWarnings("UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS")
+        @Mock
+        void setMemory(long address, long bytes, byte value) {
+            setMemoryCalled = true;
+            assertEquals(expectedAddress, address);
+            assertEquals(expectedBytes, bytes);
+            assertEquals(0, value);
+        }
+
+        @SuppressFBWarnings("UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS")
+        @Mock
+        void freeMemory(long address) {
+            freeMemoryCalled = true;
+            assertEquals(expectedAddress, address);
+        }
     }
 }
