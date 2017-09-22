@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import java.util.AbstractMap.SimpleEntry;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -538,7 +538,7 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
      * @return The key and value pair
      */
     private Entry<K, V> readEntry(long entryPointer) {
-        return new SimpleEntry<>(readKey(entryPointer), readValue(entryPointer));
+        return new SimpleImmutableEntry<>(readKey(entryPointer), readValue(entryPointer));
     }
 
     /**
