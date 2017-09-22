@@ -36,6 +36,7 @@ final class UnsafeMemoryWriter implements MemoryWriter {
      *
      * @param value The byte value
      */
+    @Override
     public void writeByte(byte value) {
         UnsafeUtils.putByte(validateAndGetAddress(Byte.BYTES), value);
     }
@@ -45,6 +46,7 @@ final class UnsafeMemoryWriter implements MemoryWriter {
      *
      * @param value The short value
      */
+    @Override
     public void writeShort(short value) {
         UnsafeUtils.putShort(validateAndGetAddress(Short.BYTES), value);
     }
@@ -54,6 +56,7 @@ final class UnsafeMemoryWriter implements MemoryWriter {
      *
      * @param value The character value
      */
+    @Override
     public void writeChar(char value) {
         UnsafeUtils.putChar(validateAndGetAddress(Character.BYTES), value);
     }
@@ -63,6 +66,7 @@ final class UnsafeMemoryWriter implements MemoryWriter {
      *
      * @param value The integer value
      */
+    @Override
     public void writeInt(int value) {
         UnsafeUtils.putInt(validateAndGetAddress(Integer.BYTES), value);
     }
@@ -72,6 +76,7 @@ final class UnsafeMemoryWriter implements MemoryWriter {
      *
      * @param value The long value
      */
+    @Override
     public void writeLong(long value) {
         UnsafeUtils.putLong(validateAndGetAddress(Long.BYTES), value);
     }
@@ -81,6 +86,7 @@ final class UnsafeMemoryWriter implements MemoryWriter {
      *
      * @param value The float value
      */
+    @Override
     public void writeFloat(float value) {
         UnsafeUtils.putFloat(validateAndGetAddress(Float.BYTES), value);
     }
@@ -90,6 +96,7 @@ final class UnsafeMemoryWriter implements MemoryWriter {
      *
      * @param value The double value
      */
+    @Override
     public void writeDouble(double value) {
         UnsafeUtils.putDouble(validateAndGetAddress(Double.BYTES), value);
     }

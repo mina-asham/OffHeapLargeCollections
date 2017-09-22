@@ -36,6 +36,7 @@ final class UnsafeMemoryReader implements MemoryReader {
      *
      * @return The byte value
      */
+    @Override
     public byte readByte() {
         return UnsafeUtils.getByte(validateAndGetAddress(Byte.BYTES));
     }
@@ -45,6 +46,7 @@ final class UnsafeMemoryReader implements MemoryReader {
      *
      * @return The short value
      */
+    @Override
     public short readShort() {
         return UnsafeUtils.getShort(validateAndGetAddress(Short.BYTES));
     }
@@ -54,6 +56,7 @@ final class UnsafeMemoryReader implements MemoryReader {
      *
      * @return The character value
      */
+    @Override
     public char readChar() {
         return UnsafeUtils.getChar(validateAndGetAddress(Character.BYTES));
     }
@@ -63,6 +66,7 @@ final class UnsafeMemoryReader implements MemoryReader {
      *
      * @return The integer value
      */
+    @Override
     public int readInt() {
         return UnsafeUtils.getInt(validateAndGetAddress(Integer.BYTES));
     }
@@ -72,6 +76,7 @@ final class UnsafeMemoryReader implements MemoryReader {
      *
      * @return The long value
      */
+    @Override
     public long readLong() {
         return UnsafeUtils.getLong(validateAndGetAddress(Long.BYTES));
     }
@@ -81,6 +86,7 @@ final class UnsafeMemoryReader implements MemoryReader {
      *
      * @return The float value
      */
+    @Override
     public float readFloat() {
         return UnsafeUtils.getFloat(validateAndGetAddress(Float.BYTES));
     }
@@ -90,6 +96,7 @@ final class UnsafeMemoryReader implements MemoryReader {
      *
      * @return The double value
      */
+    @Override
     public double readDouble() {
         return UnsafeUtils.getDouble(validateAndGetAddress(Double.BYTES));
     }
