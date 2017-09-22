@@ -10,8 +10,6 @@ import sun.misc.Unsafe;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UnsafeUtilsTest {
 
@@ -26,9 +24,9 @@ class UnsafeUtilsTest {
         UnsafeMockUp unsafeMockUp = new UnsafeMockUp(expectedAddress, expectedBytes);
 
         assertEquals(expectedAddress, UnsafeUtils.allocate(expectedBytes));
-        assertTrue(unsafeMockUp.allocateMemoryCalled);
-        assertTrue(unsafeMockUp.setMemoryCalled);
-        assertFalse(unsafeMockUp.freeMemoryCalled);
+        assertEquals(1, unsafeMockUp.allocateMemoryCalls);
+        assertEquals(1, unsafeMockUp.setMemoryCalls);
+        assertEquals(0, unsafeMockUp.freeMemoryCalls);
     }
 
     @Test
@@ -38,9 +36,9 @@ class UnsafeUtilsTest {
         UnsafeMockUp unsafeMockUp = new UnsafeMockUp(expectedAddress, -1);
 
         UnsafeUtils.free(expectedAddress);
-        assertFalse(unsafeMockUp.allocateMemoryCalled);
-        assertFalse(unsafeMockUp.setMemoryCalled);
-        assertTrue(unsafeMockUp.freeMemoryCalled);
+        assertEquals(0, unsafeMockUp.allocateMemoryCalls);
+        assertEquals(0, unsafeMockUp.setMemoryCalls);
+        assertEquals(1, unsafeMockUp.freeMemoryCalls);
     }
 
     @Test
@@ -112,20 +110,20 @@ class UnsafeUtilsTest {
         private final long expectedAddress;
         private final long expectedBytes;
 
-        private boolean allocateMemoryCalled;
-        private boolean setMemoryCalled;
-        private boolean freeMemoryCalled;
+        private int allocateMemoryCalls = 0;
+        private int setMemoryCalls = 0;
+        private int freeMemoryCalls = 0;
 
         @Mock
         long allocateMemory(long bytes) {
-            allocateMemoryCalled = true;
+            allocateMemoryCalls++;
             assertEquals(expectedBytes, bytes);
             return expectedAddress;
         }
 
         @Mock
         void setMemory(long address, long bytes, byte value) {
-            setMemoryCalled = true;
+            setMemoryCalls++;
             assertEquals(expectedAddress, address);
             assertEquals(expectedBytes, bytes);
             assertEquals(0, value);
@@ -133,7 +131,7 @@ class UnsafeUtilsTest {
 
         @Mock
         void freeMemory(long address) {
-            freeMemoryCalled = true;
+            freeMemoryCalls++;
             assertEquals(expectedAddress, address);
         }
     }
