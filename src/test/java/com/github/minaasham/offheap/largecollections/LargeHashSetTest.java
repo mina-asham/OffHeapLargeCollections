@@ -17,10 +17,7 @@ import static com.github.minaasham.offheap.largecollections.serialization.Serial
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class LargeHashSetTest {
 
@@ -357,7 +354,7 @@ class LargeHashSetTest {
 
     @Test
     void testFixedSize() {
-        try (LargeSet<Integer> set = LargeHashSet.of(new IntSerializer())) {
+        try (LargeSet<Integer> set = LargeHashSet.of(IntSerializer.INSTANCE)) {
             assertTrue(set.add(1));
             assertTrue(set.add(2));
             assertTrue(set.add(3));

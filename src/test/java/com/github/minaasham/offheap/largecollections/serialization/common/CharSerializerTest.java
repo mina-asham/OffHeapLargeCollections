@@ -8,10 +8,10 @@ class CharSerializerTest {
 
     @Test
     void test() {
-        testRoundtrip(Character.MIN_VALUE, CharSerializer::new);
-        testRoundtrip('a', CharSerializer::new);
-        testRoundtrip('b', CharSerializer::new);
-        testRoundtrip('x', CharSerializer::new);
-        testRoundtrip(Character.MAX_VALUE, CharSerializer::new);
+        testRoundtrip(Character.MIN_VALUE, () -> CharSerializer.INSTANCE);
+        testRoundtrip('a', () -> CharSerializer.INSTANCE);
+        testRoundtrip('b', () -> CharSerializer.INSTANCE);
+        testRoundtrip('x', () -> CharSerializer.INSTANCE);
+        testRoundtrip(Character.MAX_VALUE, () -> CharSerializer.INSTANCE);
     }
 }

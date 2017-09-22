@@ -10,9 +10,14 @@ import com.github.minaasham.offheap.largecollections.serialization.MemoryWriter;
 public final class CharSerializer extends FixedSizeObjectSerializer<Character> {
 
     /**
+     * Singleton instance of the {@link CharSerializer} class
+     */
+    public static final CharSerializer INSTANCE = new CharSerializer();
+
+    /**
      * CharSerializer constructor
      */
-    public CharSerializer() {
+    private CharSerializer() {
         super(Character.BYTES);
     }
 

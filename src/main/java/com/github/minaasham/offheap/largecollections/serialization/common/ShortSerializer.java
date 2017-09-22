@@ -10,9 +10,14 @@ import com.github.minaasham.offheap.largecollections.serialization.MemoryWriter;
 public final class ShortSerializer extends FixedSizeObjectSerializer<Short> {
 
     /**
+     * Singleton instance of the {@link ShortSerializer} class
+     */
+    public static final ShortSerializer INSTANCE = new ShortSerializer();
+
+    /**
      * ShortSerializer constructor
      */
-    public ShortSerializer() {
+    private ShortSerializer() {
         super(Short.BYTES);
     }
 

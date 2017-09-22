@@ -10,9 +10,14 @@ import com.github.minaasham.offheap.largecollections.serialization.MemoryWriter;
 public final class DoubleSerializer extends FixedSizeObjectSerializer<Double> {
 
     /**
+     * Singleton instance of the {@link DoubleSerializer} class
+     */
+    public static final DoubleSerializer INSTANCE = new DoubleSerializer();
+
+    /**
      * DoubleSerializer constructor
      */
-    public DoubleSerializer() {
+    private DoubleSerializer() {
         super(Double.BYTES);
     }
 

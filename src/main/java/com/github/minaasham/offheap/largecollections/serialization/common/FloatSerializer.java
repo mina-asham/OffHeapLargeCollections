@@ -10,9 +10,14 @@ import com.github.minaasham.offheap.largecollections.serialization.MemoryWriter;
 public final class FloatSerializer extends FixedSizeObjectSerializer<Float> {
 
     /**
+     * Singleton instance of the {@link FloatSerializer} class
+     */
+    public static final FloatSerializer INSTANCE = new FloatSerializer();
+
+    /**
      * FloatSerializer constructor
      */
-    public FloatSerializer() {
+    private FloatSerializer() {
         super(Float.BYTES);
     }
 

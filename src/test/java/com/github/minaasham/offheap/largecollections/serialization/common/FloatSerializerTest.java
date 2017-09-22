@@ -8,10 +8,10 @@ class FloatSerializerTest {
 
     @Test
     void test() {
-        testRoundtrip(Float.MIN_VALUE, FloatSerializer::new);
-        testRoundtrip(-1.0f, FloatSerializer::new);
-        testRoundtrip(0.0f, FloatSerializer::new);
-        testRoundtrip(1.0f, FloatSerializer::new);
-        testRoundtrip(Float.MAX_VALUE, FloatSerializer::new);
+        testRoundtrip(Float.MIN_VALUE, () -> FloatSerializer.INSTANCE);
+        testRoundtrip(-1.0f, () -> FloatSerializer.INSTANCE);
+        testRoundtrip(0.0f, () -> FloatSerializer.INSTANCE);
+        testRoundtrip(1.0f, () -> FloatSerializer.INSTANCE);
+        testRoundtrip(Float.MAX_VALUE, () -> FloatSerializer.INSTANCE);
     }
 }

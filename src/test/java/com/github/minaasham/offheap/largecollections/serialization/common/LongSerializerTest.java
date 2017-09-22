@@ -8,10 +8,10 @@ class LongSerializerTest {
 
     @Test
     void test() {
-        testRoundtrip(Long.MIN_VALUE, LongSerializer::new);
-        testRoundtrip(-1L, LongSerializer::new);
-        testRoundtrip(0L, LongSerializer::new);
-        testRoundtrip(1L, LongSerializer::new);
-        testRoundtrip(Long.MAX_VALUE, LongSerializer::new);
+        testRoundtrip(Long.MIN_VALUE, () -> LongSerializer.INSTANCE);
+        testRoundtrip(-1L, () -> LongSerializer.INSTANCE);
+        testRoundtrip(0L, () -> LongSerializer.INSTANCE);
+        testRoundtrip(1L, () -> LongSerializer.INSTANCE);
+        testRoundtrip(Long.MAX_VALUE, () -> LongSerializer.INSTANCE);
     }
 }

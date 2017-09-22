@@ -8,10 +8,10 @@ class ByteSerializerTest {
 
     @Test
     void test() {
-        testRoundtrip(Byte.MIN_VALUE, ByteSerializer::new);
-        testRoundtrip((byte) -1, ByteSerializer::new);
-        testRoundtrip((byte) 0, ByteSerializer::new);
-        testRoundtrip((byte) 1, ByteSerializer::new);
-        testRoundtrip(Byte.MAX_VALUE, ByteSerializer::new);
+        testRoundtrip(Byte.MIN_VALUE, () -> ByteSerializer.INSTANCE);
+        testRoundtrip((byte) -1, () -> ByteSerializer.INSTANCE);
+        testRoundtrip((byte) 0, () -> ByteSerializer.INSTANCE);
+        testRoundtrip((byte) 1, () -> ByteSerializer.INSTANCE);
+        testRoundtrip(Byte.MAX_VALUE, () -> ByteSerializer.INSTANCE);
     }
 }

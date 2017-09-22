@@ -10,9 +10,14 @@ import com.github.minaasham.offheap.largecollections.serialization.MemoryWriter;
 public final class LongSerializer extends FixedSizeObjectSerializer<Long> {
 
     /**
+     * Singleton instance of the {@link LongSerializer} class
+     */
+    public static final LongSerializer INSTANCE = new LongSerializer();
+
+    /**
      * LongSerializer constructor
      */
-    public LongSerializer() {
+    private LongSerializer() {
         super(Long.BYTES);
     }
 

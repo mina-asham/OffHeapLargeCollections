@@ -8,10 +8,10 @@ class IntSerializerTest {
 
     @Test
     void test() {
-        testRoundtrip(Integer.MIN_VALUE, IntSerializer::new);
-        testRoundtrip(-1, IntSerializer::new);
-        testRoundtrip(0, IntSerializer::new);
-        testRoundtrip(1, IntSerializer::new);
-        testRoundtrip(Integer.MAX_VALUE, IntSerializer::new);
+        testRoundtrip(Integer.MIN_VALUE, () -> IntSerializer.INSTANCE);
+        testRoundtrip(-1, () -> IntSerializer.INSTANCE);
+        testRoundtrip(0, () -> IntSerializer.INSTANCE);
+        testRoundtrip(1, () -> IntSerializer.INSTANCE);
+        testRoundtrip(Integer.MAX_VALUE, () -> IntSerializer.INSTANCE);
     }
 }

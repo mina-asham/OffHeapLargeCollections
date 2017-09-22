@@ -8,7 +8,7 @@ class BooleanSerializerTest {
 
     @Test
     void test() {
-        testRoundtrip(true, BooleanSerializer::new);
-        testRoundtrip(false, BooleanSerializer::new);
+        testRoundtrip(true, () -> BooleanSerializer.INSTANCE);
+        testRoundtrip(false, () -> BooleanSerializer.INSTANCE);
     }
 }

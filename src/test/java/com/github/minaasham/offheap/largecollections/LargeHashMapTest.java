@@ -21,11 +21,7 @@ import static com.github.minaasham.offheap.largecollections.serialization.Serial
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class LargeHashMapTest {
 
@@ -383,7 +379,7 @@ class LargeHashMapTest {
 
     @Test
     void testFixedSize() {
-        try (LargeMap<Integer, Integer> map = LargeHashMap.of(new IntSerializer(), new IntSerializer())) {
+        try (LargeMap<Integer, Integer> map = LargeHashMap.of(IntSerializer.INSTANCE, IntSerializer.INSTANCE)) {
             assertNull(map.put(1, 10));
             assertNull(map.put(2, 20));
             assertNull(map.put(3, 30));
@@ -398,7 +394,7 @@ class LargeHashMapTest {
 
     @Test
     void testBadHashAndHighLoad() {
-        try (LargeMap<BadHashInteger, Integer> map = LargeHashMap.of(new BadHashIntegerSerializer(), new IntSerializer(), 0.99, 1020)) {
+        try (LargeMap<BadHashInteger, Integer> map = LargeHashMap.of(new BadHashIntegerSerializer(), IntSerializer.INSTANCE, 0.99, 1020)) {
             int limit = 1000;
 
             for (int i = 0; i <= limit; i++) {

@@ -4,9 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.stream.IntStream;
 
-import static com.github.minaasham.offheap.largecollections.serialization.SerializationTestUtils.randomInt;
-import static com.github.minaasham.offheap.largecollections.serialization.SerializationTestUtils.randomString;
-import static com.github.minaasham.offheap.largecollections.serialization.SerializationTestUtils.testRoundtrip;
+import static com.github.minaasham.offheap.largecollections.serialization.SerializationTestUtils.*;
 
 class ArraySerializerTest {
 
@@ -21,6 +19,6 @@ class ArraySerializerTest {
     void testIntArray() {
         Integer[] integers = IntStream.range(0, 1000).mapToObj(ignored -> randomInt()).toArray(Integer[]::new);
 
-        testRoundtrip(integers, () -> new ArraySerializer<>(new IntSerializer(), Integer.class));
+        testRoundtrip(integers, () -> new ArraySerializer<>(IntSerializer.INSTANCE, Integer.class));
     }
 }

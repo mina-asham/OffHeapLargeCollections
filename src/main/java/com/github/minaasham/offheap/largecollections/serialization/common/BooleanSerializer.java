@@ -10,9 +10,14 @@ import com.github.minaasham.offheap.largecollections.serialization.MemoryWriter;
 public final class BooleanSerializer extends FixedSizeObjectSerializer<Boolean> {
 
     /**
+     * Singleton instance of the {@link BooleanSerializer} class
+     */
+    public static final BooleanSerializer INSTANCE = new BooleanSerializer();
+
+    /**
      * BooleanSerializer constructor
      */
-    public BooleanSerializer() {
+    private BooleanSerializer() {
         super(Byte.BYTES);
     }
 

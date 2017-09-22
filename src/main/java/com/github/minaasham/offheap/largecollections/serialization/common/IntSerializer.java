@@ -10,9 +10,14 @@ import com.github.minaasham.offheap.largecollections.serialization.MemoryWriter;
 public final class IntSerializer extends FixedSizeObjectSerializer<Integer> {
 
     /**
+     * Singleton instance of the {@link IntSerializer} class
+     */
+    public static final IntSerializer INSTANCE = new IntSerializer();
+
+    /**
      * IntSerializer constructor
      */
-    public IntSerializer() {
+    private IntSerializer() {
         super(Integer.BYTES);
     }
 
