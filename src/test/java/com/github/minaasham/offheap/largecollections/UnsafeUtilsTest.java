@@ -1,6 +1,5 @@
 package com.github.minaasham.offheap.largecollections;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import mockit.Mock;
@@ -31,7 +30,6 @@ class UnsafeUtilsTest {
         assertTrue(unsafeMockUp.setMemoryCalled);
         assertFalse(unsafeMockUp.freeMemoryCalled);
     }
-
 
     @Test
     void testFree() {
@@ -118,7 +116,6 @@ class UnsafeUtilsTest {
         private boolean setMemoryCalled;
         private boolean freeMemoryCalled;
 
-        @SuppressFBWarnings("UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS")
         @Mock
         long allocateMemory(long bytes) {
             allocateMemoryCalled = true;
@@ -126,7 +123,6 @@ class UnsafeUtilsTest {
             return expectedAddress;
         }
 
-        @SuppressFBWarnings("UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS")
         @Mock
         void setMemory(long address, long bytes, byte value) {
             setMemoryCalled = true;
@@ -135,7 +131,6 @@ class UnsafeUtilsTest {
             assertEquals(0, value);
         }
 
-        @SuppressFBWarnings("UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS")
         @Mock
         void freeMemory(long address) {
             freeMemoryCalled = true;
