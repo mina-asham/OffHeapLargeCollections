@@ -6,6 +6,11 @@ import lombok.RequiredArgsConstructor;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+/**
+ * AbstractMapBasedLargeSet, an abstract class to implement any type of set using a map with a zero-bytes fixed serializer for the value
+ *
+ * @param <E> The element type
+ */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 abstract class AbstractMapBasedLargeSet<E> implements LargeSet<E> {
     /**
