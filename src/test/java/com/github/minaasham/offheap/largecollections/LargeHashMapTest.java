@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.stream.IntStream;
 
 import static com.github.minaasham.offheap.largecollections.serialization.SerializationTestUtils.randomString;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toList;
@@ -25,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class LargeHashMapTest {
 
-    private static final StringSerializer STRING_SERIALIZER = new StringSerializer();
+    private static final StringSerializer STRING_SERIALIZER = new StringSerializer(UTF_8);
     private static final LargeMap<String, String> EMPTY_MAP = LargeHashMap.of(STRING_SERIALIZER, STRING_SERIALIZER, 1);
 
     @AfterAll

@@ -19,14 +19,6 @@ public final class StringSerializer implements ObjectSerializer<String> {
     private final Charset encoding;
 
     /**
-     * Default constructor for the StringSerializer,
-     * uses the default system encoding
-     */
-    public StringSerializer() {
-        this(Charset.defaultCharset());
-    }
-
-    /**
      * Serializes a string using a memory writer
      *
      * @param writer The writer that is used for serialization

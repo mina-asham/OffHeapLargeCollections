@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.stream.IntStream;
 
 import static com.github.minaasham.offheap.largecollections.serialization.SerializationTestUtils.randomString;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toList;
@@ -21,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class LargeHashSetTest {
 
-    private static final StringSerializer STRING_SERIALIZER = new StringSerializer();
+    private static final StringSerializer STRING_SERIALIZER = new StringSerializer(UTF_8);
     private static final LargeSet<String> EMPTY_SET = LargeHashSet.of(STRING_SERIALIZER, 1);
 
     @AfterAll

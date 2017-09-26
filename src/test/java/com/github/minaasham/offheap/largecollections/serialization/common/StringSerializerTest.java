@@ -12,7 +12,7 @@ class StringSerializerTest {
     @Test
     void test() {
         for (int i = 0; i < 100; i++) {
-            testRoundtrip(randomString(), StringSerializer::new);
+            testRoundtrip(randomString(), () -> new StringSerializer(UTF_8));
         }
 
         for (int i = 0; i < 100; i++) {

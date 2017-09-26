@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.stream.IntStream;
 
 import static com.github.minaasham.offheap.largecollections.serialization.SerializationTestUtils.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 class ArraySerializerTest {
 
@@ -12,7 +13,7 @@ class ArraySerializerTest {
     void testStringArray() {
         String[] strings = IntStream.range(0, 1000).mapToObj(ignored -> randomString()).toArray(String[]::new);
 
-        testRoundtrip(strings, () -> new ArraySerializer<>(new StringSerializer(), String.class));
+        testRoundtrip(strings, () -> new ArraySerializer<>(new StringSerializer(UTF_8), String.class));
     }
 
     @Test
