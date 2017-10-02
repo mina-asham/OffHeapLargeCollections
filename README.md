@@ -9,7 +9,7 @@ Currently supported collections:
 * **LargeHashSet:** an open-addressing based hash set
 * **LargeHashMap:** an open-addressing based hash map
 
-Planned to support for version 1.0:
+Planned to support for version 1.1:
 * **LargeTreeSet**
 * **LargeTreeMap**
 
