@@ -402,8 +402,13 @@ public final class LargeHashMap<K, V> implements LargeMap<K, V> {
 
         LargeHashMap<K, V> that = (LargeHashMap<K, V>) o;
 
-        if (size != that.size) return false;
-        if (closed != that.closed) return false;
+        lock.readLock().lock();
+        try {
+            if (size != that.size) return false;
+            if (closed != that.closed) return false;
+        } finally {
+            lock.readLock().unlock();
+        }
 
         for (Entry<K, V> entry : this) {
             V thisValue = entry.getValue();
