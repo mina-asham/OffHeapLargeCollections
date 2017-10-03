@@ -44,13 +44,13 @@ Off heap large collections requires the use of serializers to serialize and dese
     <dependency>
         <groupId>com.github.mina-asham</groupId>
         <artifactId>offheap-largecollections</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
     </dependency>
 </dependencies>
 ```
 
 ## Development Snapshots
-[com.github.mina-asham:offheap-largecollections:1.0-SNAPSHOT](https://oss.sonatype.org/content/repositories/snapshots/com/github/mina-asham/offheap-largecollections/1.0-SNAPSHOT/)
+[com.github.mina-asham:offheap-largecollections:1.1-SNAPSHOT](https://oss.sonatype.org/content/repositories/snapshots/com/github/mina-asham/offheap-largecollections/1.1-SNAPSHOT/)
 
 ## JDK Support
 At the moment this project is compatible with ***JDK8+***, at the moment the project will not compile with JDK9 as [lombok does not support the JDK9 compiler](https://github.com/rzwitserloot/lombok/issues/985)
